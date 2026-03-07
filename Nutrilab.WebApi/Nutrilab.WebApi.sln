@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.37012.4 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nutrilab.WebApi", "Nutrilab.WebApi.csproj", "{DEAFFB78-933A-430E-9F6F-4C7BED25DBF8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nutrilab.DataAccess", "..\Nutrilab.DataAccess\Nutrilab.DataAccess.csproj", "{A73CB0A1-63EF-4811-8F1D-7C5547C47AC9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nutrilab.Repositories", "..\Nutrilab.Repositories\Nutrilab.Repositories.csproj", "{22AAD27F-5B8F-4450-9204-9B9A64D8EAB7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nutrilab.Services", "..\Nutrilab.Services\Nutrilab.Services.csproj", "{278D74E8-F6DD-46D3-9C5B-6E20EDF626A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nutrilab.Shared", "..\Nutrilab.Shared\Nutrilab.Shared.csproj", "{F3D17D78-5309-4FCB-A088-79F371004519}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nutrilab.Dtos", "..\Nutrilab.Dtos\Nutrilab.Dtos.csproj", "{411827F1-F8C6-4A88-81A1-6652850AC2BB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DEAFFB78-933A-430E-9F6F-4C7BED25DBF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEAFFB78-933A-430E-9F6F-4C7BED25DBF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEAFFB78-933A-430E-9F6F-4C7BED25DBF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEAFFB78-933A-430E-9F6F-4C7BED25DBF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A73CB0A1-63EF-4811-8F1D-7C5547C47AC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A73CB0A1-63EF-4811-8F1D-7C5547C47AC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A73CB0A1-63EF-4811-8F1D-7C5547C47AC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A73CB0A1-63EF-4811-8F1D-7C5547C47AC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22AAD27F-5B8F-4450-9204-9B9A64D8EAB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22AAD27F-5B8F-4450-9204-9B9A64D8EAB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22AAD27F-5B8F-4450-9204-9B9A64D8EAB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22AAD27F-5B8F-4450-9204-9B9A64D8EAB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{278D74E8-F6DD-46D3-9C5B-6E20EDF626A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{278D74E8-F6DD-46D3-9C5B-6E20EDF626A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{278D74E8-F6DD-46D3-9C5B-6E20EDF626A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{278D74E8-F6DD-46D3-9C5B-6E20EDF626A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3D17D78-5309-4FCB-A088-79F371004519}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3D17D78-5309-4FCB-A088-79F371004519}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3D17D78-5309-4FCB-A088-79F371004519}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3D17D78-5309-4FCB-A088-79F371004519}.Release|Any CPU.Build.0 = Release|Any CPU
+		{411827F1-F8C6-4A88-81A1-6652850AC2BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{411827F1-F8C6-4A88-81A1-6652850AC2BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{411827F1-F8C6-4A88-81A1-6652850AC2BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{411827F1-F8C6-4A88-81A1-6652850AC2BB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E41CF217-B31F-4646-92EF-4A22F1A6F091}
+	EndGlobalSection
+EndGlobal

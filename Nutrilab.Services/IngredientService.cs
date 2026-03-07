@@ -1,0 +1,41 @@
+﻿using Nutrilab.DataAccess.Models.Ingredients;
+using Nutrilab.Dtos.Ingredients;
+using Nutrilab.Repositories;
+using Nutrilab.Shared.Interfaces.EntityModels;
+using Nutrilab.Shared.Models.Exceptions;
+
+namespace Nutrilab.Services
+{
+    public interface IIngredientService
+    {
+        Task<List<IIngredient>> GetAllAsync();
+        Task<IIngredient> CreateAsync(CreateIngredientDto request);
+        Task DeleteAsync(long id);
+    }
+
+    public sealed class IngredientService(IIngredientRepository repo) : IIngredientService
+    {
+        public async Task<List<IIngredient>> GetAllAsync()
+        {
+            var ingredients = await repo.GetAllAsync();
+            return ingredients.ToList<IIngredient>();
+        }
+
+        public async Task<IIngredient> CreateAsync(CreateIngredientDto request)
+        {
+            var ingredient = new Ingredient
+            {
+                Name = request.Name,
+                Unit = request.Unit
+            };
+            return await repo.InsertAsync(ingredient);
+        }
+
+        public async Task DeleteAsync(long id)
+        {
+            var ingredient = await repo.GetByIdAsync(id)
+                ?? throw new NotFoundException($"Ingredient {id} not found");
+            await repo.DeleteAsync(ingredient);
+        }
+    }
+}
