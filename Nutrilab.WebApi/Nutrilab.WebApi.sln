@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.37012.4 d17.14
+VisualStudioVersion = 17.14.37012.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nutrilab.WebApi", "Nutrilab.WebApi.csproj", "{DEAFFB78-933A-430E-9F6F-4C7BED25DBF8}"
 EndProject
@@ -14,6 +14,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nutrilab.Shared", "..\Nutrilab.Shared\Nutrilab.Shared.csproj", "{F3D17D78-5309-4FCB-A088-79F371004519}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nutrilab.Dtos", "..\Nutrilab.Dtos\Nutrilab.Dtos.csproj", "{411827F1-F8C6-4A88-81A1-6652850AC2BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NutrilabApp.Frontend", "..\NutrilabApp.Frontend\NutrilabApp.Frontend.csproj", "{B06348AB-BD75-4BB4-8F15-074A688A8F02}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{411827F1-F8C6-4A88-81A1-6652850AC2BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{411827F1-F8C6-4A88-81A1-6652850AC2BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{411827F1-F8C6-4A88-81A1-6652850AC2BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B06348AB-BD75-4BB4-8F15-074A688A8F02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B06348AB-BD75-4BB4-8F15-074A688A8F02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B06348AB-BD75-4BB4-8F15-074A688A8F02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B06348AB-BD75-4BB4-8F15-074A688A8F02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,10 @@
+﻿namespace Nutrilab.Dtos.Recipes
+{
+    public sealed class RecipeIngredientOutgoingDto
+    {
+        public long IngredientId { get; set; }
+        public string IngredientName { get; set; }
+        public decimal Quantity { get; set; }
+        public string Unit { get; set; }
+    }
+}

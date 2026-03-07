@@ -1,0 +1,77 @@
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 240px;
+    background: #2d6a4f;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem 1rem;
+    position: fixed;
+    height: 100vh;
+}
+
+.sidebar-logo {
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+    padding-left: 0.5rem;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.nav-item {
+    color: rgba(255,255,255,0.85);
+    text-decoration: none;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+    .nav-item:hover {
+        background: rgba(255,255,255,0.15);
+        color: white;
+    }
+
+.sidebar-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    border-top: 1px solid rgba(255,255,255,0.2);
+    padding-top: 1rem;
+}
+
+.user-email {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.7);
+    word-break: break-all;
+}
+
+.btn-logout {
+    background: rgba(255,255,255,0.15);
+    color: white;
+    border: none;
+    padding: 0.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+    .btn-logout:hover {
+        background: rgba(255,255,255,0.25);
+    }
+
+.main-content {
+    margin-left: 240px;
+    padding: 2rem;
+    flex: 1;
+    background: #f8faf8;
+    min-height: 100vh;
+}

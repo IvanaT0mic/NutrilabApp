@@ -5,7 +5,6 @@ using Nutrilab.Services.AuthServices.Models;
 using Nutrilab.Services.Handlers;
 using Nutrilab.Shared.Models;
 using Nutrilab.Shared.Models.Exceptions;
-using Shared.Models.Exceptions;
 
 namespace Nutrilab.Services.AuthServices
 {

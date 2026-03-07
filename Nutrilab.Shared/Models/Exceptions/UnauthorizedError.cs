@@ -1,7 +1,6 @@
-﻿using Nutrilab.Shared.Models.Exceptions;
-using System.Net;
+﻿using System.Net;
 
-namespace Shared.Models.Exceptions
+namespace Nutrilab.Shared.Models.Exceptions
 {
     public class UnauthorizedException : BaseException
     {

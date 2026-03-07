@@ -1,0 +1,20 @@
+﻿@inherits MainLayoutBase
+
+<div class="app-layout">
+    <aside class="sidebar">
+        <div class="sidebar-logo">🥗 NutriPlan</div>
+        <nav class="sidebar-nav">
+            <a href="/home" class="nav-item">🏠 Home</a>
+            <a href="/recipes" class="nav-item">📖 Recipes</a>
+            <a href="/shopping" class="nav-item">🛒 Shopping List</a>
+        </nav>
+        <div class="sidebar-footer">
+            <span class="user-email">@Email</span>
+            <button class="btn-logout" @onclick="Logout">Logout</button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        @Body
+    </main>
+</div>
