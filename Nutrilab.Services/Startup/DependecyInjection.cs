@@ -14,11 +14,13 @@ namespace Nutrilab.Services.Startup
         {
             //register handlers
             services.AddScoped<IJwtHandler, JwtHandler>();
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
 
             //register repositories
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IIngredientRepository, IngredientRepository>();
             services.AddScoped<IRecipeRepository, RecipeRepository>();
+            services.AddScoped<IRecipeIngredientRepository, RecipeIngredientRepository>();
 
             services.ConfigureContext(connectionString);
         }

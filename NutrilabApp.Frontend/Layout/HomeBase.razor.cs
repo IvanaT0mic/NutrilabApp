@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Nutrilab.Dtos.Recipes;
+using Nutrilab.Dtos.Recipes.RecipeOutgoingDto;
 using NutrilabApp.Frontend.Services;
 using System.Net.Http.Json;
 

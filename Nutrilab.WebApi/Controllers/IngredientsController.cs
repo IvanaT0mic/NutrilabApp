@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Nutrilab.Dtos.Ingredients;
 using Nutrilab.Services;
@@ -8,22 +9,13 @@ namespace Nutrilab.WebApi.Controllers
     [ApiController]
     [Route("[controller]")]
     [Authorize]
-    public class IngredientsController(IIngredientService service) : ControllerBase
+    public class IngredientsController(IIngredientService service, IMapper mapper) : ControllerBase
     {
         [HttpGet]
         public async Task<ActionResult<List<IngredientOutgoingDto>>> GetAllAsync()
         {
             var ingredients = await service.GetAllAsync();
-            var result = new List<IngredientOutgoingDto>();
-            foreach (var ingredient in ingredients)
-            {
-                var item = new IngredientOutgoingDto();
-                item.Id = ingredient.Id;
-                item.Name = ingredient.Name;
-                item.Unit = ingredient.Unit;
-
-                result.Add(item);
-            }
+            var result = mapper.Map<List<IngredientOutgoingDto>>(ingredients);
             return Ok(result);
         }
 
@@ -31,11 +23,8 @@ namespace Nutrilab.WebApi.Controllers
         public async Task<ActionResult<IngredientOutgoingDto>> GetByIdAsync([FromRoute] long id)
         {
             var ingredient = await service.GetByIdAsync(id);
-            var item = new IngredientOutgoingDto();
-            item.Id = ingredient.Id;
-            item.Name = ingredient.Name;
-            item.Unit = ingredient.Unit;
-            return Ok(item);
+            var result = mapper.Map<IngredientOutgoingDto>(ingredient);
+            return Ok(result);
         }
 
         [HttpPost]

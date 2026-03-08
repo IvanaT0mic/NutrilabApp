@@ -1,104 +1,118 @@
-﻿using Nutrilab.DataAccess.Models.RecipeIngredients;
+﻿using AutoMapper;
+using Nutrilab.DataAccess.Models.RecipeIngredients;
 using Nutrilab.DataAccess.Models.Recipes;
-using Nutrilab.Dtos.Recipes;
 using Nutrilab.Dtos.Recipes.CreateRecipeDtos;
-using Nutrilab.Dtos.Recipes.RecipeDetailOutgoingDtos;
 using Nutrilab.Dtos.Recipes.UpdateRecipeDtos;
 using Nutrilab.Repositories;
+using Nutrilab.Services.Handlers;
+using Nutrilab.Shared.Interfaces.EntityModels;
 using Nutrilab.Shared.Models.Exceptions;
+using System.Transactions;
 
 namespace Nutrilab.Services
 {
     public interface IRecipeService
     {
-        Task<List<RecipeOutgoingDto>> GetAllAsync();
-        Task<RecipeDetailOutgoingDto> GetByIdAsync(long id);
-        Task<RecipeDetailOutgoingDto> CreateAsync(CreateRecipeDto request, long userId);
-        Task<RecipeDetailOutgoingDto> UpdateAsync(long id, UpdateRecipeDto request, long userId);
-        Task DeleteAsync(long id, long userId);
+        Task<List<IRecipe>> GetAllAsync();
+        Task<IRecipe> GetByIdAsync(long id);
+        Task<long> CreateAsync(CreateRecipeDto request);
+        Task UpdateAsync(long id, UpdateRecipeDto request);
+        Task DeleteAsync(long id);
     }
 
-    public sealed class RecipeService(IRecipeRepository repo) : IRecipeService
+    public sealed class RecipeService(
+        IRecipeRepository repo,
+        IIngredientRepository ingredientRepository,
+        IRecipeIngredientRepository recipeIngredientRepository,
+        ICurrentUserService currentUserService,
+        IMapper mapper
+        ) : IRecipeService
     {
-        public async Task<List<RecipeOutgoingDto>> GetAllAsync()
+        public async Task<List<IRecipe>> GetAllAsync()
         {
             var recipes = await repo.GetAllAsync();
-            return recipes.Select(r => new RecipeOutgoingDto
-            {
-                Id = r.Id,
-                Name = r.Name,
-                Description = r.Description
-            }).ToList();
+            return recipes.ToList<IRecipe>();
         }
 
-        public async Task<RecipeDetailOutgoingDto> GetByIdAsync(long id)
+        public async Task<IRecipe> GetByIdAsync(long id)
         {
-            var recipe = await repo.GetByIdAsync(id)
-                ?? throw new NotFoundException($"Recipe {id} not found");
-            return MapDetail(recipe);
+            var recipe = await repo.GetByIdExtendedAsync(id);
+            if (recipe == null)
+            {
+                throw new NotFoundException($"Recipe {id} not found");
+            }
+            return recipe;
         }
 
-        public async Task<RecipeDetailOutgoingDto> CreateAsync(CreateRecipeDto request, long userId)
+        public async Task<long> CreateAsync(CreateRecipeDto request)
         {
-            var recipe = new Recipe
+            var ingredientIds = request.Ingredients.Select(i => i.IngredientId).ToList();
+            var existingIngredients = await ingredientRepository.GetAllByIdsAsync(ingredientIds);
+
+            if (existingIngredients.Count != ingredientIds.Count)
             {
-                Name = request.Name,
-                Description = request.Description,
-                CreatedByUserId = userId,
-                RecipeIngredients = request.Ingredients.Select(i => new RecipeIngredient
-                {
-                    IngredientId = i.IngredientId,
-                    Quantity = i.Quantity
-                }).ToList()
-            };
+                var missing = ingredientIds.Except(existingIngredients.Select(i => i.Id));
+                throw new NotFoundException($"Ingredients not found: {string.Join(", ", missing)}");
+            }
+
+            var recipe = mapper.Map<Recipe>(request);
+
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             var created = await repo.InsertAsync(recipe);
-            return await GetByIdAsync(created.Id);
+            await InsertRecipeIngredientsIfAnyAsync(created.Id, request.Ingredients);
+
+            scope.Complete();
+            return created.Id;
         }
 
-        public async Task<RecipeDetailOutgoingDto> UpdateAsync(long id, UpdateRecipeDto request, long userId)
+        private async Task InsertRecipeIngredientsIfAnyAsync(long recipeId, List<RecipeIngredientDto> ingredients)
         {
-            var recipe = await repo.GetByIdAsync(id)
+            if (ingredients.Count == 0) return;
+
+            var recipeIngredients = ingredients.Select(i => new RecipeIngredient
+            {
+                RecipeId = recipeId,
+                IngredientId = i.IngredientId,
+                Quantity = i.Quantity
+            }).ToList();
+
+            await recipeIngredientRepository.InsertRangeAsync(recipeIngredients);
+        }
+
+        public async Task UpdateAsync(long id, UpdateRecipeDto request)
+        {
+            var recipe = await repo.GetByIdExtendedAsync(id)
                 ?? throw new NotFoundException($"Recipe {id} not found");
 
-            if (recipe.CreatedByUserId != userId)
+
+            var currentUser = currentUserService.GetCurrentUser();
+            if (recipe.CreatedByUserId != currentUser.Id)
+            {
                 throw new UnauthorizedException("You can only edit your own recipes");
+            }
 
             recipe.Name = request.Name;
             recipe.Description = request.Description;
 
             await repo.UpdateAsync(recipe);
-            return await GetByIdAsync(id);
         }
 
-        public async Task DeleteAsync(long id, long userId)
+        public async Task DeleteAsync(long id)
         {
-            var recipe = await repo.GetByIdAsync(id);
+            var recipe = await repo.GetByIdExtendedAsync(id);
             if (recipe == null)
             {
                 throw new NotFoundException($"Recipe {id} not found");
             }
 
-            if (recipe.CreatedByUserId != userId)
+            var currentUser = currentUserService.GetCurrentUser();
+            if (recipe.CreatedByUserId != currentUser.Id)
             {
                 throw new UnauthorizedException("You can only delete your own recipes");
             }
 
             await repo.DeleteAsync(recipe);
         }
-
-        private static RecipeDetailOutgoingDto MapDetail(Recipe r) => new()
-        {
-            Id = r.Id,
-            Name = r.Name,
-            Description = r.Description,
-            Ingredients = r.RecipeIngredients?.Select(i => new RecipeIngredientOutgoingDto
-            {
-                IngredientId = i.IngredientId,
-                IngredientName = i.Ingredient?.Name ?? "",
-                Quantity = i.Quantity,
-                Unit = i.Ingredient?.Unit ?? ""
-            }).ToList() ?? []
-        };
     }
 }

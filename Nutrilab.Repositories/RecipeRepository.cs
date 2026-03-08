@@ -7,7 +7,7 @@ namespace Nutrilab.Repositories
     public interface IRecipeRepository
     {
         Task<List<Recipe>> GetAllAsync();
-        Task<Recipe?> GetByIdAsync(long id);
+        Task<Recipe?> GetByIdExtendedAsync(long id);
         Task<Recipe> InsertAsync(Recipe data);
         Task<Recipe> UpdateAsync(Recipe data);
         Task DeleteAsync(Recipe data);
@@ -16,14 +16,18 @@ namespace Nutrilab.Repositories
     public sealed class RecipeRepository(EntityContext context)
         : BaseRepository<Recipe>(context), IRecipeRepository
     {
-        public Task<List<Recipe>> GetAllAsync() =>
-            GetQueryable().ToListAsync();
+        public Task<List<Recipe>> GetAllAsync()
+        {
+            return GetQueryable().ToListAsync();
+        }
 
-        public Task<Recipe?> GetByIdAsync(long id) =>
-            GetQueryable()
+        public Task<Recipe?> GetByIdExtendedAsync(long id)
+        {
+            return GetQueryable()
                 .Include(x => x.RecipeIngredients)
                     .ThenInclude(x => x.Ingredient)
                 .AsSplitQuery()
                 .FirstOrDefaultAsync(x => x.Id == id);
+        }
     }
 }

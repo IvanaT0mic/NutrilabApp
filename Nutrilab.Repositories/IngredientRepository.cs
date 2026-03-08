@@ -8,7 +8,9 @@ namespace Nutrilab.Repositories
     {
         Task<List<Ingredient>> GetAllAsync();
         Task<Ingredient?> GetByIdAsync(long id);
+        Task<List<Ingredient>> GetAllByIdsAsync(List<long> ids);
         Task<Ingredient> InsertAsync(Ingredient data);
+        Task<List<Ingredient>> InsertRangeAsync(List<Ingredient> data);
         Task DeleteAsync(Ingredient ingredient);
     }
 
@@ -17,6 +19,13 @@ namespace Nutrilab.Repositories
         public Task<List<Ingredient>> GetAllAsync()
         {
             return GetQueryable().ToListAsync();
+        }
+
+        public Task<List<Ingredient>> GetAllByIdsAsync(List<long> ids)
+        {
+            return GetQueryable()
+                .Where(x => ids.Contains(x.Id))
+                .ToListAsync();
         }
 
         public Task<Ingredient?> GetByIdAsync(long id)

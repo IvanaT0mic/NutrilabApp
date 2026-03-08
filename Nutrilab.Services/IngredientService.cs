@@ -1,4 +1,5 @@
-﻿using Nutrilab.DataAccess.Models.Ingredients;
+﻿using AutoMapper;
+using Nutrilab.DataAccess.Models.Ingredients;
 using Nutrilab.Dtos.Ingredients;
 using Nutrilab.Repositories;
 using Nutrilab.Shared.Interfaces.EntityModels;
@@ -14,7 +15,7 @@ namespace Nutrilab.Services
         Task DeleteAsync(long id);
     }
 
-    public sealed class IngredientService(IIngredientRepository repo) : IIngredientService
+    public sealed class IngredientService(IIngredientRepository repo, IMapper mapper) : IIngredientService
     {
         public async Task<List<IIngredient>> GetAllAsync()
         {
@@ -34,19 +35,18 @@ namespace Nutrilab.Services
 
         public async Task<long> CreateAsync(CreateIngredientDto request)
         {
-            var ingredient = new Ingredient
-            {
-                Name = request.Name,
-                Unit = request.Unit
-            };
+            var ingredient = mapper.Map<Ingredient>(request);
             Ingredient ingredientdb = await repo.InsertAsync(ingredient);
             return ingredientdb.Id;
         }
 
         public async Task DeleteAsync(long id)
         {
-            var ingredient = await repo.GetByIdAsync(id)
-                ?? throw new NotFoundException($"Ingredient {id} not found");
+            var ingredient = await repo.GetByIdAsync(id);
+            if (ingredient == null)
+            {
+                throw new NotFoundException($"Ingredient {id} not found");
+            }
             await repo.DeleteAsync(ingredient);
         }
     }
