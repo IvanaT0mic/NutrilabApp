@@ -8,8 +8,6 @@
 
         string PasswordHash { get; }
 
-        DateTime CreatedAt { get; }
-
         List<IUserRole> UserRoles { get; }
 
         List<IRecipe> Recipes { get; }

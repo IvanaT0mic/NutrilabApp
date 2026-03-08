@@ -2,6 +2,7 @@ using Nutrilab.Dtos.Startup;
 using Nutrilab.Services.Startup;
 using Nutrilab.Shared.Models;
 using Nutrilab.WebApi.Extensions;
+using Nutrilab.WebApi.Middlewares;
 using Nutrilab.WebApi.Startup;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,6 +29,8 @@ services.StartDtoProject();
 services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

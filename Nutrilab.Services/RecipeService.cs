@@ -56,6 +56,7 @@ namespace Nutrilab.Services
             }
 
             var recipe = mapper.Map<Recipe>(request);
+            recipe.CreatedByUserId = currentUserService.GetCurrentUser().Id;
 
             using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 

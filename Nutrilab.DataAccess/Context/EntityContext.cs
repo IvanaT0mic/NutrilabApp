@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Nutrilab.DataAccess.Models.FavouriteRecipes;
 using Nutrilab.DataAccess.Models.Ingredients;
 using Nutrilab.DataAccess.Models.Permissions;
@@ -9,13 +8,12 @@ using Nutrilab.DataAccess.Models.RolePermissions;
 using Nutrilab.DataAccess.Models.Roles;
 using Nutrilab.DataAccess.Models.UserRoles;
 using Nutrilab.DataAccess.Models.Users;
+using Nutrilab.Shared.Interfaces.EntityAudit;
 
 namespace Nutrilab.DataAccess.Context
 {
-    public sealed class EntityContext : DbContext
+    public sealed class EntityContext(DbContextOptions options) : DbContext(options)
     {
-        readonly IHttpContextAccessor _httpContextAccessor;
-
         #region Db sets
         public DbSet<User> Users { get; set; }
 
@@ -36,14 +34,20 @@ namespace Nutrilab.DataAccess.Context
         public DbSet<FavouriteRecipe> FavouriteRecipes { get; set; }
         #endregion
 
-        public EntityContext(DbContextOptions options, IHttpContextAccessor httpContextAccessor) : base(options)
-        {
-            _httpContextAccessor = httpContextAccessor;
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(EntityContext).Assembly);
+        }
+
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            var entries = ChangeTracker.Entries<IHasCreatedAt>()
+                .Where(e => e.State == EntityState.Added);
+
+            foreach (var entry in entries)
+                entry.Entity.CreatedAt = DateTime.UtcNow;
+
+            return await base.SaveChangesAsync(cancellationToken);
         }
     }
 }

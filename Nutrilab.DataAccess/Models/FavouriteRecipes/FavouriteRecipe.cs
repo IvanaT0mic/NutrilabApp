@@ -1,10 +1,11 @@
 ﻿using Nutrilab.DataAccess.Models.Recipes;
 using Nutrilab.DataAccess.Models.Users;
+using Nutrilab.Shared.Interfaces.EntityAudit;
 using Nutrilab.Shared.Interfaces.EntityModels;
 
 namespace Nutrilab.DataAccess.Models.FavouriteRecipes
 {
-    public class FavouriteRecipe : IFavouriteRecipe
+    public class FavouriteRecipe : IFavouriteRecipe, IHasCreatedAt
     {
         public long UserId { get; set; }
 

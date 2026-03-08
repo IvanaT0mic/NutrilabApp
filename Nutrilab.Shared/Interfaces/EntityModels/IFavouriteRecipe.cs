@@ -10,6 +10,5 @@
 
         IRecipe Recipe { get; }
 
-        DateTime CreatedAt { get; }
     }
 }
