@@ -8,7 +8,10 @@ namespace Nutrilab.Repositories
     {
         Task<User?> GetByEmailWithRolesAndPermissionsAsync(string email);
         Task<bool> DoesUserAlreadyExists(string email);
+        Task<List<User>> GetAllAsync();
+        Task<User?> GetByIdWithRolesAsync(long id);
         Task<User> InsertAsync(User user);
+        Task DeleteAsync(User data);
     }
 
     public sealed class UserRepository(EntityContext context) : BaseRepository<User>(context), IUserRepository
@@ -18,6 +21,22 @@ namespace Nutrilab.Repositories
             return GetQueryable()
                 .Where(x => x.Email == email)
                 .AnyAsync();
+        }
+
+        public Task<User?> GetByIdWithRolesAsync(long id)
+        {
+            return GetQueryable()
+                .Include(x => x.UserRoles)
+                    .ThenInclude(x => x.Role)
+                .FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public Task<List<User>> GetAllAsync()
+        {
+            return GetQueryable()
+                .Include(x => x.UserRoles)
+                .ThenInclude(x => x.Role)
+                .ToListAsync();
         }
 
         public Task<User?> GetByEmailWithRolesAndPermissionsAsync(string email)

@@ -8,6 +8,8 @@ namespace Nutrilab.Repositories
     {
         Task<List<Recipe>> GetAllAsync();
         Task<Recipe?> GetByIdExtendedAsync(long id);
+        Task<bool> AnyWithUserIdAsync(long userId);
+
         Task<Recipe> InsertAsync(Recipe data);
         Task<Recipe> UpdateAsync(Recipe data);
         Task DeleteAsync(Recipe data);
@@ -16,6 +18,13 @@ namespace Nutrilab.Repositories
     public sealed class RecipeRepository(EntityContext context)
         : BaseRepository<Recipe>(context), IRecipeRepository
     {
+        public Task<bool> AnyWithUserIdAsync(long userId)
+        {
+            return GetQueryable()
+                .Where(x => x.CreatedByUserId == userId)
+                .AnyAsync();
+        }
+
         public Task<List<Recipe>> GetAllAsync()
         {
             return GetQueryable().ToListAsync();
