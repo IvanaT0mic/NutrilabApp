@@ -1,6 +1,8 @@
 ﻿using Nutrilab.DataAccess.Models.FavouriteRecipes;
 using Nutrilab.DataAccess.Models.RecipeIngredients;
+using Nutrilab.DataAccess.Models.RecipeResources;
 using Nutrilab.DataAccess.Models.Users;
+using Nutrilab.Shared.Interfaces.EntityAudit;
 using Nutrilab.Shared.Interfaces.EntityModels;
 
 namespace Nutrilab.DataAccess.Models.Recipes
@@ -21,10 +23,14 @@ namespace Nutrilab.DataAccess.Models.Recipes
 
         public List<FavouriteRecipe> FavouriteUsers { get; set; }
 
+        public List<RecipeResource> Resources { get; set; }
+
         IUser IRecipe.CreatedByUser => CreatedByUser;
 
         List<IRecipeIngredient> IRecipe.RecipeIngredients => RecipeIngredients.ToList<IRecipeIngredient>();
 
         List<IFavouriteRecipe> IRecipe.FavouriteUsers => FavouriteUsers.ToList<IFavouriteRecipe>();
+
+        List<IRecipeResource> IRecipe.Resources => Resources.ToList<IRecipeResource>();
     }
 }

@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Nutrilab.DataAccess.Models.RecipeIngredients;
+using Nutrilab.DataAccess.Models.RecipeResources;
 using Nutrilab.DataAccess.Models.Recipes;
 using Nutrilab.Dtos.Recipes.CreateRecipeDtos;
 using Nutrilab.Dtos.Recipes.UpdateRecipeDtos;
@@ -16,8 +18,11 @@ namespace Nutrilab.Services
         Task<List<IRecipe>> GetAllAsync();
         Task<IRecipe> GetByIdAsync(long id);
         Task<long> CreateAsync(CreateRecipeDto request);
+
+        Task<long> CreateImageAsync(long id, IFormFile file);
         Task UpdateAsync(long id, UpdateRecipeDto request);
         Task DeleteAsync(long id);
+        Task DeleteImageByIdAsync(long id);
     }
 
     public sealed class RecipeService(
@@ -25,6 +30,8 @@ namespace Nutrilab.Services
         IIngredientRepository ingredientRepository,
         IRecipeIngredientRepository recipeIngredientRepository,
         ICurrentUserService currentUserService,
+        IRecipeResourceRepository recipeResourceRepository,
+        IFavouriteRecipeRepository favouriteRecipeRepository,
         IMapper mapper
         ) : IRecipeService
     {
@@ -83,9 +90,11 @@ namespace Nutrilab.Services
 
         public async Task UpdateAsync(long id, UpdateRecipeDto request)
         {
-            var recipe = await repo.GetByIdExtendedAsync(id)
-                ?? throw new NotFoundException($"Recipe {id} not found");
-
+            var recipe = await repo.GetByIdExtendedAsync(id);
+            if (recipe == null)
+            {
+                throw new NotFoundException($"Recipe {id} not found");
+            }
 
             var currentUser = currentUserService.GetCurrentUser();
             if (recipe.CreatedByUserId != currentUser.Id)
@@ -113,7 +122,78 @@ namespace Nutrilab.Services
                 throw new UnauthorizedException("You can only delete your own recipes");
             }
 
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+            if (recipe.RecipeIngredients?.Any() == true)
+            {
+                await recipeIngredientRepository.DeleteRangeAsync(recipe.RecipeIngredients);
+            }
+
+            if (recipe.FavouriteUsers?.Any() == true)
+            {
+                await favouriteRecipeRepository.DeleteRangeAsync(recipe.FavouriteUsers);
+            }
+
+            if (recipe.Resources?.Any() == true)
+            {
+                await recipeResourceRepository.DeleteRangeAsync(recipe.Resources);
+            }
+
             await repo.DeleteAsync(recipe);
+
+            scope.Complete();
+        }
+
+        public async Task<long> CreateImageAsync(long id, IFormFile file)
+        {
+            var recipe = await repo.GetByIdExtendedAsync(id);
+            if (recipe == null)
+            {
+                throw new NotFoundException($"Recipe {id} not found");
+            }
+
+            ValidateFile(file);
+
+            using var ms = new MemoryStream();
+            await file.CopyToAsync(ms);
+
+            var base64 = Convert.ToBase64String(ms.ToArray());
+
+            var resource = new RecipeResource
+            {
+                RecipeId = id,
+                Base64 = base64
+            };
+
+            var resourceDb = await recipeResourceRepository.InsertAsync(resource);
+            return resourceDb.Id;
+        }
+
+        public void ValidateFile(IFormFile file)
+        {
+            var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+            var AllowedExtensions = new List<string>
+                {
+                   ".jpg",
+                    ".jpeg",
+                    ".png",
+                    ".webp"
+                };
+            if (!AllowedExtensions.Contains(extension))
+            {
+                throw new BadRequestException("Unsupported file format");
+            }
+        }
+
+        public async Task DeleteImageByIdAsync(long id)
+        {
+            var imgDb = await recipeResourceRepository.GetRecipeResourceAsync(id);
+            if (imgDb == null)
+            {
+                throw new NotFoundException($"Recipe image with {id} not found");
+            }
+
+            await recipeResourceRepository.DeleteAsync(imgDb);
         }
     }
 }

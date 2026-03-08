@@ -25,6 +25,7 @@ namespace Nutrilab.Services.Startup
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IRolePermissionRepository, RolePermissionRepository>();
             services.AddScoped<IFavouriteRecipeRepository, FavouriteRecipeRepository>();
+            services.AddScoped<IRecipeResourceRepository, RecipeResourceRepository>();
 
             services.ConfigureContext(connectionString);
         }

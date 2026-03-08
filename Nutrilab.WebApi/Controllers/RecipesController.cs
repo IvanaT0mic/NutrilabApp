@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Nutrilab.Dtos.Recipes.CreateRecipeDtos;
 using Nutrilab.Dtos.Recipes.RecipeDetailOutgoingDtos;
 using Nutrilab.Dtos.Recipes.RecipeOutgoingDto;
+using Nutrilab.Dtos.Recipes.Resoruces;
 using Nutrilab.Dtos.Recipes.UpdateRecipeDtos;
 using Nutrilab.Services;
 
@@ -46,6 +47,22 @@ namespace Nutrilab.WebApi.Controllers
         public async Task<ActionResult> UpdateAsync([FromRoute] long id, [FromBody] UpdateRecipeDto request)
         {
             await recipeService.UpdateAsync(id, request);
+            return NoContent();
+        }
+
+        [HttpPost("{id}/image")]
+        [Authorize(Roles = "Admin,Editor")]
+        public async Task<ActionResult<long>> CreateImage([FromRoute] long id, [FromForm] CreateRecipeResource request)
+        {
+            var imgId = await recipeService.CreateImageAsync(id, request.File);
+            return Ok(imgId);
+        }
+
+        [HttpDelete("image/{id}")]
+        [Authorize(Roles = "Admin,Editor")]
+        public async Task<ActionResult<long>> DeleteImage([FromRoute] long id)
+        {
+            await recipeService.DeleteImageByIdAsync(id);
             return NoContent();
         }
 

@@ -1,4 +1,6 @@
-﻿namespace Nutrilab.Shared.Interfaces.EntityModels
+﻿using Nutrilab.Shared.Interfaces.EntityAudit;
+
+namespace Nutrilab.Shared.Interfaces.EntityModels
 {
     public interface IRecipe
     {
@@ -15,5 +17,7 @@
         List<IRecipeIngredient> RecipeIngredients { get; }
 
         List<IFavouriteRecipe> FavouriteUsers { get; }
+
+        List<IRecipeResource> Resources { get; }
     }
 }

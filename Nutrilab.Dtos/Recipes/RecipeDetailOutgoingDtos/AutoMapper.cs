@@ -8,9 +8,13 @@ namespace Nutrilab.Dtos.Recipes.RecipeDetailOutgoingDtos
         public AutoMapper()
         {
             CreateMap<IRecipe, RecipeDetailOutgoingDto>()
-                        .ForMember(
-                            dest => dest.Ingredients,
-                            opt => opt.MapFrom(src => src.RecipeIngredients));
+                .ForMember(
+                    dest => dest.Ingredients,
+                    opt => opt.MapFrom(src => src.RecipeIngredients))
+                .ForMember(
+                    dest => dest.ImageBase64,
+                    opt => opt.MapFrom(src => src.Resources.FirstOrDefault())
+                );
 
             CreateMap<IRecipeIngredient, RecipeIngredientOutgoingDto>()
                 .ForMember(

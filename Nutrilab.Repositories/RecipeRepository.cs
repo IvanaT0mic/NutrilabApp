@@ -35,6 +35,7 @@ namespace Nutrilab.Repositories
             return GetQueryable()
                 .Include(x => x.RecipeIngredients)
                     .ThenInclude(x => x.Ingredient)
+                .Include(x => x.Resources)
                 .AsSplitQuery()
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
