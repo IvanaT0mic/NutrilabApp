@@ -10,7 +10,7 @@ namespace Nutrilab.DataAccess.Models.ShoppingListItems
     public class ShoppingListItem
     {
         public long Id { get; set; }
-
+        //komentar
         public string Name { get; set; }
 
         public decimal Quantity { get; set; }
