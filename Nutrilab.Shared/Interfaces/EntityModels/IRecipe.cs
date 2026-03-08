@@ -1,4 +1,5 @@
-﻿using Nutrilab.Shared.Interfaces.EntityAudit;
+﻿using Nutrilab.Shared.Enums;
+using Nutrilab.Shared.Interfaces.EntityAudit;
 
 namespace Nutrilab.Shared.Interfaces.EntityModels
 {
@@ -13,6 +14,12 @@ namespace Nutrilab.Shared.Interfaces.EntityModels
         long CreatedByUserId { get; }
 
         IUser CreatedByUser { get; }
+
+        int? PreparationTimeMinutes { get; }
+
+        MealCategory? MealCategory { get; }
+
+        DifficultyLvl? DifficultyLvl { get; }
 
         List<IRecipeIngredient> RecipeIngredients { get; }
 

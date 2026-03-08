@@ -13,7 +13,7 @@ namespace Nutrilab.Dtos.Recipes.RecipeDetailOutgoingDtos
                     opt => opt.MapFrom(src => src.RecipeIngredients))
                 .ForMember(
                     dest => dest.ImageBase64,
-                    opt => opt.MapFrom(src => src.Resources.FirstOrDefault())
+                    opt => opt.MapFrom(src => src.Resources.FirstOrDefault().Base64 ?? null)
                 );
 
             CreateMap<IRecipeIngredient, RecipeIngredientOutgoingDto>()

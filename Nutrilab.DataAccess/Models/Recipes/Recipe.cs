@@ -2,6 +2,7 @@
 using Nutrilab.DataAccess.Models.RecipeIngredients;
 using Nutrilab.DataAccess.Models.RecipeResources;
 using Nutrilab.DataAccess.Models.Users;
+using Nutrilab.Shared.Enums;
 using Nutrilab.Shared.Interfaces.EntityAudit;
 using Nutrilab.Shared.Interfaces.EntityModels;
 
@@ -24,6 +25,12 @@ namespace Nutrilab.DataAccess.Models.Recipes
         public List<FavouriteRecipe> FavouriteUsers { get; set; }
 
         public List<RecipeResource> Resources { get; set; }
+
+        public int? PreparationTimeMinutes { get; set; }
+
+        public MealCategory? MealCategory { get; set; }
+
+        public DifficultyLvl? DifficultyLvl { get; set; }
 
         IUser IRecipe.CreatedByUser => CreatedByUser;
 

@@ -16,6 +16,7 @@ namespace Nutrilab.WebApi.Controllers
     public class RecipesController(
         IRecipeService recipeService,
         IRecipeIngredientService recipeIngredientService,
+        IFavouriteRecipeService favouriteRecipeService,
         IMapper mapper) : ControllerBase
     {
         [HttpGet]
@@ -78,6 +79,20 @@ namespace Nutrilab.WebApi.Controllers
         public async Task<ActionResult> DeleteAsync([FromRoute] long id)
         {
             await recipeService.DeleteAsync(id);
+            return NoContent();
+        }
+
+        [HttpPost("{id}/favourite")]
+        public async Task<ActionResult> MarkAsFav([FromRoute] long id)
+        {
+            await favouriteRecipeService.MarkAsFavouriteAsync(id);
+            return NoContent();
+        }
+
+        [HttpDelete("{id}/favourite")]
+        public async Task<ActionResult> RemoveFromFavs([FromRoute] long id)
+        {
+            await favouriteRecipeService.RemoveFromFavouritesAsync(id);
             return NoContent();
         }
     }

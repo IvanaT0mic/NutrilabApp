@@ -1,4 +1,6 @@
-﻿namespace Nutrilab.Dtos.Recipes.RecipeDetailOutgoingDtos
+﻿using Nutrilab.Shared.Enums;
+
+namespace Nutrilab.Dtos.Recipes.RecipeDetailOutgoingDtos
 {
     public sealed class RecipeDetailOutgoingDto
     {
@@ -7,5 +9,8 @@
         public string? Description { get; set; }
         public List<RecipeIngredientOutgoingDto> Ingredients { get; set; }
         public string ImageBase64 { get; set; }
+        public int? PreparationTimeMinutes { get; set; }
+        public MealCategory? MealCategory { get; set; }
+        public DifficultyLvl? DifficultyLvl { get; set; }
     }
 }
