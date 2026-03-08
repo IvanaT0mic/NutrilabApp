@@ -1,4 +1,4 @@
-﻿namespace Nutrilab.Dtos.Recipes
+﻿namespace Nutrilab.Dtos.Recipes.RecipeDetailOutgoingDtos
 {
     public sealed class RecipeIngredientOutgoingDto
     {

@@ -18,6 +18,7 @@ namespace Nutrilab.Services.Startup
             //register repositories
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IIngredientRepository, IngredientRepository>();
+            services.AddScoped<IRecipeRepository, RecipeRepository>();
 
             services.ConfigureContext(connectionString);
         }
