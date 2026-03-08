@@ -23,7 +23,7 @@ namespace Nutrilab.DataAccess.Models.ShoppingLists
             builder.HasMany(x => x.Items)
                 .WithOne(i => i.ShoppingList)
                 .HasForeignKey(i => i.ShoppingListId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
 
             builder.HasData(Seed.Data);
         }
