@@ -9,7 +9,8 @@ namespace Nutrilab.Services
     public interface IIngredientService
     {
         Task<List<IIngredient>> GetAllAsync();
-        Task<IIngredient> CreateAsync(CreateIngredientDto request);
+        Task<long> CreateAsync(CreateIngredientDto request);
+        Task<IIngredient> GetByIdAsync(long id);
         Task DeleteAsync(long id);
     }
 
@@ -21,14 +22,25 @@ namespace Nutrilab.Services
             return ingredients.ToList<IIngredient>();
         }
 
-        public async Task<IIngredient> CreateAsync(CreateIngredientDto request)
+        public async Task<IIngredient> GetByIdAsync(long id)
+        {
+            var ingredientDb = await repo.GetByIdAsync(id);
+            if (ingredientDb == null)
+            {
+                throw new NotFoundException("Ingredient with id " + id + " not found.");
+            }
+            return ingredientDb;
+        }
+
+        public async Task<long> CreateAsync(CreateIngredientDto request)
         {
             var ingredient = new Ingredient
             {
                 Name = request.Name,
                 Unit = request.Unit
             };
-            return await repo.InsertAsync(ingredient);
+            Ingredient ingredientdb = await repo.InsertAsync(ingredient);
+            return ingredientdb.Id;
         }
 
         public async Task DeleteAsync(long id)

@@ -1,4 +1,5 @@
-﻿using Nutrilab.Services.AuthServices;
+﻿using Nutrilab.Services;
+using Nutrilab.Services.AuthServices;
 using Nutrilab.Services.Startup;
 
 namespace Nutrilab.WebApi.Startup
@@ -11,6 +12,7 @@ namespace Nutrilab.WebApi.Startup
         )
         {
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IIngredientService, IngredientService>();
 
             services.ConfigureRepositories(connectionString);
         }
