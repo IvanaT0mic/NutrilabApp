@@ -59,7 +59,7 @@ namespace Nutrilab.Services.AuthServices
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password)
             };
 
-            var userDb = userRepo.InsertAsync(newUser);
+            var userDb = await userRepo.InsertAsync(newUser);
             return userDb.Id;
         }
     }
