@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Nutrilab.DataAccess.Models.ShoppingLists
+﻿namespace Nutrilab.DataAccess.Models.ShoppingLists
 {
     public static class Seed
     {
