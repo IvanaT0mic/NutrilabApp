@@ -16,7 +16,7 @@ namespace NutrilabApp.Frontend.Pages.Login
         protected override async Task OnInitializedAsync()
         {
             if (await AuthService.IsAuthenticatedAsync())
-                Navigation.NavigateTo("/home");
+                Navigation.NavigateTo("/dashboard");
         }
 
         protected async Task HandleLogin()
@@ -27,7 +27,7 @@ namespace NutrilabApp.Frontend.Pages.Login
             var success = await AuthService.LoginAsync(Email, Password);
 
             if (success)
-                Navigation.NavigateTo("/home");
+                Navigation.NavigateTo("/dashboard");
             else
                 ErrorMessage = "Invalid email or password.";
 

@@ -1,20 +1,120 @@
 ﻿@inherits MainLayoutBase
 
-<div class="app-layout">
-    <aside class="sidebar">
-        <div class="sidebar-logo">🥗 NutriPlan</div>
-        <nav class="sidebar-nav">
-            <a href="/home" class="nav-item">🏠 Home</a>
-            <a href="/recipes" class="nav-item">📖 Recipes</a>
-            <a href="/shopping" class="nav-item">🛒 Shopping List</a>
+@if (!IsReady)
+{
+    <div class="d-flex align-items-center justify-content-center vh-100">
+        <div class="spinner-border text-success" role="status"></div>
+    </div>
+}
+else
+{
+    <!-- DESKTOP sidebar — vidljiv samo na lg+ -->
+    <aside class="sidebar-desktop d-none d-lg-flex flex-column">
+        <div class="sidebar-logo">🥗 NutriLab</div>
+        <nav class="sidebar-nav nav flex-column">
+            @NavLinks
         </nav>
         <div class="sidebar-footer">
-            <span class="user-email">@Email</span>
-            <button class="btn-logout" @onclick="Logout">Logout</button>
+            @UserFooter
         </div>
     </aside>
 
+    <!-- MOBILE topbar — vidljiv samo ispod lg -->
+    <nav class="mobile-topbar d-flex d-lg-none">
+        <span class="mobile-topbar-title">🥗 NutriLab</span>
+        <button class="btn btn-sm btn-outline-light"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#mobileMenu"
+                aria-controls="mobileMenu">
+            ☰
+        </button>
+    </nav>
+
+    <!-- MOBILE offcanvas -->
+    <div class="offcanvas offcanvas-start"
+         style="background-color:#1b4332; width:260px; color:white"
+         tabindex="-1"
+         id="mobileMenu"
+         aria-labelledby="mobileMenuLabel">
+        <div class="offcanvas-header" style="border-bottom: 1px solid rgba(255,255,255,0.1)">
+            <h6 class="offcanvas-title text-white" id="mobileMenuLabel">🥗 NutriLab</h6>
+            <button type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="offcanvas"
+                    aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body p-2">
+            <nav class="nav flex-column">
+                @NavLinks
+            </nav>
+        </div>
+        <div class="p-3" style="border-top: 1px solid rgba(255,255,255,0.1)">
+            @UserFooter
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
     <main class="main-content">
         @Body
     </main>
-</div>
+}
+
+@code {
+    private RenderFragment NavLinks => __builder =>
+    {
+        <a href="/dashboard"
+           class="nav-link @(CurrentPage == "dashboard" ? "active" : "")">
+            🏠 Dashboard
+        </a>
+
+        if (IsAdminOrMaintainer)
+        {
+            <a href="/users"
+               class="nav-link @(CurrentPage == "users" ? "active" : "")">
+                👥 User Management
+            </a>
+        }
+
+        if (IsAdmin)
+        {
+            <a href="/roles"
+               class="nav-link @(CurrentPage == "roles" ? "active" : "")">
+                🔐 Roles & Permissions
+            </a>
+        }
+
+        if (IsEditorOrAdmin)
+        {
+            <a href="/recipes/create"
+               class="nav-link @(CurrentPage == "create-recipe" ? "active" : "")">
+                ✏️ Create Recipe
+            </a>
+        }
+
+        <a href="/recipes"
+           class="nav-link @(CurrentPage == "recipes" ? "active" : "")">
+            📖 Recipe Library
+        </a>
+    };
+
+    private RenderFragment UserFooter => __builder =>
+    {
+        <div class="d-flex align-items-center gap-2 mb-2">
+            <div class="user-avatar">
+                @(string.IsNullOrEmpty(Email) ? "?" : Email[0].ToString().ToUpper())
+            </div>
+            <div class="overflow-hidden">
+                <div class="text-white small fw-semibold text-truncate" style="max-width:150px">
+                    @Email
+                </div>
+                <div class="small" style="color: var(--nutrilab-green-mid)">
+                    @PrimaryRole
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-sm btn-outline-danger w-100" @onclick="Logout">
+            Logout
+        </button>
+    };
+}

@@ -7,7 +7,7 @@ namespace Nutrilab.Dtos.Roles
     {
         public AutoMapper()
         {
-            CreateMap<IRole, RoleOutgoingDto>()
+            CreateMap<IRole, RoleDto>()
                 .ForMember(
                     dest => dest.Permissions,
                     opt => opt.MapFrom(src => src.RolePermissions.Select(ur => ur.Permission.Name))

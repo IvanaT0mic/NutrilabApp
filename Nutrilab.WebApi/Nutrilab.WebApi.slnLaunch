@@ -4,7 +4,7 @@
     "Projects": [
       {
         "Path": "Nutrilab.WebApi.csproj",
-        "Action": "Start"
+        "Action": "StartWithoutDebugging"
       },
       {
         "Path": "..\\NutrilabApp.Frontend\\NutrilabApp.Frontend.csproj",

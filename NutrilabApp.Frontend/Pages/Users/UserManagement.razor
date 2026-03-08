@@ -1,0 +1,150 @@
+﻿@page "/users"
+@inherits UserManagementBase
+
+<PageTitle>User Management - NutriLab</PageTitle>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-0">User Management</h2>
+        <small class="text-muted">@Users.Count user(s) registered</small>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(ErrorMessage))
+{
+    <div class="alert alert-danger">@ErrorMessage</div>
+}
+@if (!string.IsNullOrEmpty(SuccessMessage))
+{
+    <div class="alert alert-success">@SuccessMessage</div>
+}
+
+@if (IsLoading)
+{
+    <div class="text-center py-5">
+        <div class="spinner-border text-success" role="status"></div>
+        <p class="mt-2 text-muted">Loading users...</p>
+    </div>
+}
+else
+{
+    <div class="card shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width:50px">#</th>
+                        <th>Email</th>
+                        <th>Roles</th>
+                        <th style="width:200px">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Users)
+                    {
+                        <tr class="@(EditingUserId == user.Id ? "table-active" : "")">
+                            <td class="text-muted small">@user.Id</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="mini-avatar">
+                                        @(user.Email.Length > 0 ? user.Email[0].ToString().ToUpper() : "?")
+                                    </div>
+                                    <span>@user.Email</span>
+                                </div>
+                            </td>
+                            <td>
+                                @if (EditingUserId == user.Id)
+                                {
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        @foreach (var role in AllRoles)
+                                        {
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox"
+                                                       id="role_@role.Id"
+                                                       checked="@EditingRoleIds.Contains(role.Id)"
+                                                       @onchange="@(e => ToggleRole(role.Id, (bool)e.Value!))" />
+                                                <label class="form-check-label badge role-@role.Name.ToLower()"
+                                                       for="role_@role.Id">
+                                                    @role.Name
+                                                </label>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="d-flex gap-1 flex-wrap">
+                                        @if (user.Roles.Any())
+                                        {
+                                            @foreach (var role in user.Roles)
+                                            {
+                                                <span class="badge" style="background-color: var(--nutrilab-green-light); color: var(--nutrilab-green)">@role</span>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted fst-italic small">No roles</span>
+                                        }
+                                    </div>
+                                }
+                            </td>
+                            <td>
+                                @if (EditingUserId == user.Id)
+                                {
+                                    <button class="btn btn-success btn-sm me-1"
+                                            @onclick="SaveRoles" disabled="@IsSaving">
+                                        @(IsSaving ? "Saving..." : "✓ Save")
+                                    </button>
+                                    <button class="btn btn-secondary btn-sm" @onclick="CancelEdit">
+                                        Cancel
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-outline-success btn-sm me-1"
+                                            @onclick="@(() => StartEdit(user))">
+                                        ✏️
+                                    </button>
+                                    @if (CanDelete)
+                                    {
+                                        <button class="btn btn-outline-danger btn-sm"
+                                                @onclick="@(() => ConfirmDelete(user.Id, user.Email))">
+                                            🗑
+                                        </button>
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+@if (ShowDeleteConfirm)
+{
+    <!-- Bootstrap Modal -->
+    <div class="modal d-block" tabindex="-1" style="background:rgba(0,0,0,0.5)">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete User</h5>
+                    <button type="button" class="btn-close" @onclick="CancelDelete"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete <strong>@DeleteTargetEmail</strong>?</p>
+                    <div class="alert alert-warning mb-0">
+                        ⚠️ This action cannot be undone. Users with recipes cannot be deleted.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="CancelDelete">Cancel</button>
+                    <button class="btn btn-danger" @onclick="ExecuteDelete" disabled="@IsSaving">
+                        @(IsSaving ? "Deleting..." : "Delete User")
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

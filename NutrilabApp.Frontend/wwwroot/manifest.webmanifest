@@ -1,11 +1,11 @@
 {
-  "name": "NutrilabApp.Frontend",
-  "short_name": "NutrilabApp.Frontend",
+  "name": "NutriLab",
+  "short_name": "NutriLab",
   "id": "./",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#03173d",
+  "background_color": "#f0f7f1",
+  "theme_color": "#2d6a4f",
   "prefer_related_applications": false,
   "icons": [
     {

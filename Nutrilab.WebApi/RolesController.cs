@@ -13,10 +13,10 @@ namespace Nutrilab.WebApi
     {
         [HttpGet]
         [Authorize(Roles = "Admin,Maintainer")]
-        public async Task<ActionResult<List<RoleOutgoingDto>>> GetAll()
+        public async Task<ActionResult<List<RoleDto>>> GetAll()
         {
             var roles = await roleService.GetAllAsync();
-            var result = mapper.Map<List<RoleOutgoingDto>>(roles);
+            var result = mapper.Map<List<RoleDto>>(roles);
             return Ok(result);
         }
 
