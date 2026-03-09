@@ -11,7 +11,7 @@ namespace Nutrilab.DataAccess.Models.ShoppingListItems
     public class ShoppingListItem : IShoppingListItem
     {
         public long Id { get; set; }
-        
+
         public string Name { get; set; }
 
         public decimal Quantity { get; set; }
@@ -22,7 +22,9 @@ namespace Nutrilab.DataAccess.Models.ShoppingListItems
 
         public long ShoppingListId { get; set; }
 
-        public IShoppingList ShoppingList { get; set; }
+        public ShoppingList ShoppingList { get; set; }
+
+        IShoppingList IShoppingListItem.ShoppingList => ShoppingList;
     }
 }
 
