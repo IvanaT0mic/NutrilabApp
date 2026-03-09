@@ -18,6 +18,7 @@ namespace Nutrilab.WebApi.Startup
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IFavouriteRecipeService, FavouriteRecipeService>();
+            services.AddScoped<IShoppingListService, ShoppingListService>();
 
             services.ConfigureRepositories(connectionString);
         }
