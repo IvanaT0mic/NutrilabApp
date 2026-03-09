@@ -1,9 +1,10 @@
 ﻿using Nutrilab.DataAccess.Models.ShoppingListItems;
 using Nutrilab.DataAccess.Models.Users;
+using Nutrilab.Shared.Interfaces.EntityModels;
 
 namespace Nutrilab.DataAccess.Models.ShoppingLists
 {
-    public class ShoppingList
+    public class ShoppingList : IShoppingList
     {
         public long Id { get; set; }
 
@@ -11,8 +12,8 @@ namespace Nutrilab.DataAccess.Models.ShoppingLists
 
         public long CreatedByUserId { get; set; }
 
-        public User CreatedByUser { get; set; }
+        public IUser CreatedByUser { get; set; }
 
-        public List<ShoppingListItem> Items { get; set; } = new();
+        public List<IShoppingListItem> Items { get; set; } = new();
     }
 }

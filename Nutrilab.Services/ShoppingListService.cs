@@ -1,27 +1,30 @@
 ﻿using Nutrilab.DataAccess.Models.ShoppingListItems;
 using Nutrilab.DataAccess.Models.ShoppingLists;
+using Nutrilab.DataAccess.Models.Users;
 using Nutrilab.Dtos.ShoppingList.CreateShoppingListDtos;
 using Nutrilab.Dtos.ShoppingList.UpdateShoppingListDtos;
 using Nutrilab.Repositories;
 using Nutrilab.Services.Handlers;
+using Nutrilab.Shared.Interfaces.EntityModels;
 using Nutrilab.Shared.Models.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace Nutrilab.Services
 {
     public interface IShoppingListService
     {
-        Task<List<ShoppingList>> GetAllAsync();
-        Task<ShoppingList> GetByIdAsync(long id);
+        Task<List<IShoppingList>> GetAllAsync();
+        Task<IShoppingList> GetByIdAsync(long id);
         Task<long> CreateAsync(CreateShoppingListDto request);
         Task UpdateAsync(long id, UpdateShoppingListDto request);
         Task DeleteAsync(long id);
 
-        Task<ShoppingListItem> AddItemAsync(long shoppingListId, CreateShoppingListItemDto request);
+        Task<IShoppingListItem> AddItemAsync(long shoppingListId, CreateShoppingListItemDto request);
         Task UpdateItemAsync(long shoppingListId, long itemId, UpdateShoppingListItemDto request);
         Task DeleteItemAsync(long shoppingListId, long itemId);
     }
@@ -32,19 +35,20 @@ namespace Nutrilab.Services
         ICurrentUserService currentUserService
     ) : IShoppingListService
     {
-        public async Task<List<ShoppingList>> GetAllAsync()
+        public async Task<List<IShoppingList>> GetAllAsync()
         {
             var userId = currentUserService.GetCurrentUser().Id;
-            return await repo.GetAllByUserIdAsync(userId);
+            var result = await repo.GetAllByUserIdAsync(userId);
+            return result.ToList<IShoppingList>();
         }
 
-        public async Task<ShoppingList> GetByIdAsync(long id)
+        public async Task<IShoppingList> GetByIdAsync(long id)
         {
             var list = await repo.GetByIdWithItemsAsync(id)
                 ?? throw new NotFoundException($"Shopping list {id} not found");
 
             EnsureOwnership(list.CreatedByUserId);
-            return list;
+            return (IShoppingList)list;
         }
 
         public async Task<long> CreateAsync(CreateShoppingListDto request)
@@ -54,18 +58,32 @@ namespace Nutrilab.Services
             var shoppingList = new ShoppingList
             {
                 Name = request.Name,
-                CreatedByUserId = userId,
-                Items = request.Items.Select(i => new ShoppingListItem
-                {
-                    Name = i.Name,
-                    Quantity = i.Quantity,
-                    Unit = i.Unit,
-                    IsChecked = false
-                }).ToList()
+                CreatedByUserId = userId
             };
 
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
             var created = await repo.InsertAsync(shoppingList);
+            await InsertItemsIfAnyAsync(created.Id, request.Items);
+
+            scope.Complete();
             return created.Id;
+        }
+
+        private async Task InsertItemsIfAnyAsync(long shoppingListId, List<CreateShoppingListItemDto> items)
+        {
+            if (items.Count == 0) return;
+
+            var shoppingListItems = items.Select(i => new ShoppingListItem
+            {
+                ShoppingListId = shoppingListId,
+                Name = i.Name,
+                Quantity = i.Quantity,
+                Unit = i.Unit,
+                IsChecked = false
+            }).ToList();
+
+            await itemRepo.InsertRangeAsync(shoppingListItems);
         }
 
         public async Task UpdateAsync(long id, UpdateShoppingListDto request)
@@ -88,7 +106,7 @@ namespace Nutrilab.Services
             await repo.DeleteAsync(list);
         }
 
-        public async Task<ShoppingListItem> AddItemAsync(long shoppingListId, CreateShoppingListItemDto request)
+        public async Task<IShoppingListItem> AddItemAsync(long shoppingListId, CreateShoppingListItemDto request)
         {
             var list = await repo.GetByIdWithItemsAsync(shoppingListId)
                 ?? throw new NotFoundException($"Shopping list {shoppingListId} not found");
@@ -104,7 +122,7 @@ namespace Nutrilab.Services
                 IsChecked = false
             };
 
-            return await itemRepo.InsertAsync(item);
+            return (IShoppingListItem)await itemRepo.InsertAsync(item);
         }
 
         public async Task UpdateItemAsync(long shoppingListId, long itemId, UpdateShoppingListItemDto request)

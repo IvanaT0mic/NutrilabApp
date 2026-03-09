@@ -1,4 +1,5 @@
 ﻿using Nutrilab.DataAccess.Models.ShoppingLists;
+using Nutrilab.Shared.Interfaces.EntityModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace Nutrilab.DataAccess.Models.ShoppingListItems
 {
-    public class ShoppingListItem
+    public class ShoppingListItem : IShoppingListItem
     {
         public long Id { get; set; }
-        //komentar
+        
         public string Name { get; set; }
 
         public decimal Quantity { get; set; }
@@ -21,7 +22,7 @@ namespace Nutrilab.DataAccess.Models.ShoppingListItems
 
         public long ShoppingListId { get; set; }
 
-        public ShoppingList ShoppingList { get; set; }
+        public IShoppingList ShoppingList { get; set; }
     }
 }
 

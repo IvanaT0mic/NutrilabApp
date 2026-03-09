@@ -15,6 +15,7 @@ namespace Nutrilab.WebApi.Startup
             services.AddScoped<IIngredientService, IngredientService>();
             services.AddScoped<IRecipeService, RecipeService>();
             services.AddScoped<IRecipeIngredientService, RecipeIngredientService>();
+            services.AddScoped<IShoppingListService, ShoppingListService>();
 
             services.ConfigureRepositories(connectionString);
         }

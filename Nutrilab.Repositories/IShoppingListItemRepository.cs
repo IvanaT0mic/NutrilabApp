@@ -13,6 +13,7 @@ namespace Nutrilab.Repositories
     {
         Task<ShoppingListItem?> GetByIdAsync(long id);
         Task<ShoppingListItem> InsertAsync(ShoppingListItem data);
+        Task<List<ShoppingListItem>> InsertRangeAsync(List<ShoppingListItem> data);
         Task<ShoppingListItem> UpdateAsync(ShoppingListItem data);
         Task DeleteAsync(ShoppingListItem data);
     }
