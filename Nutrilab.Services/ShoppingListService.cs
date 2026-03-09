@@ -103,6 +103,10 @@ namespace Nutrilab.Services
                 ?? throw new NotFoundException($"Shopping list {id} not found");
 
             EnsureOwnership(list.CreatedByUserId);
+
+            if (list.Items.Count > 0)
+                await itemRepo.DeleteRangeAsync(list.Items);
+
             await repo.DeleteAsync(list);
         }
 

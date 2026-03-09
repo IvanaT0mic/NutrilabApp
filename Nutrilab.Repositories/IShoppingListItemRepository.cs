@@ -16,6 +16,7 @@ namespace Nutrilab.Repositories
         Task<List<ShoppingListItem>> InsertRangeAsync(List<ShoppingListItem> data);
         Task<ShoppingListItem> UpdateAsync(ShoppingListItem data);
         Task DeleteAsync(ShoppingListItem data);
+        Task DeleteRangeAsync(List<ShoppingListItem> data);
     }
 
     public sealed class ShoppingListItemRepository(EntityContext context)
