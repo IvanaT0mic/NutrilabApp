@@ -95,5 +95,23 @@ namespace Nutrilab.WebApi.Controllers
             await favouriteRecipeService.RemoveFromFavouritesAsync(id);
             return NoContent();
         }
+
+        [HttpGet("{id}/pdf")]
+        public async Task<IActionResult> DownloadPdf([FromRoute] long id)
+        {
+            var pdfBytes = await recipeService.DownloadRecipePdfByIdAsync(id);
+
+            var fileName = $"{id}_recept.pdf";
+            var pdf = File(
+                pdfBytes,
+                "application/pdf",
+                fileName
+            );
+
+            return new FileContentResult(pdfBytes, "application/pdf")
+            {
+                FileDownloadName = fileName
+            };
+        }
     }
 }

@@ -2,6 +2,7 @@
 using Nutrilab.Repositories;
 using Nutrilab.Repositories.Startup;
 using Nutrilab.Services.Handlers;
+using Nutrilab.Services.Handlers.PdfHandlers;
 
 namespace Nutrilab.Services.Startup
 {
@@ -15,6 +16,8 @@ namespace Nutrilab.Services.Startup
             //register handlers
             services.AddScoped<IJwtHandler, JwtHandler>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddScoped<IPdfHandler, RecipePdfHandler>();
+            services.AddScoped<PdfHandlerFactory>();
 
             //register repositories
             services.AddScoped<IUserRepository, UserRepository>();

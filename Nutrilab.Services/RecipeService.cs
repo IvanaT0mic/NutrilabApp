@@ -7,6 +7,8 @@ using Nutrilab.Dtos.Recipes.CreateRecipeDtos;
 using Nutrilab.Dtos.Recipes.UpdateRecipeDtos;
 using Nutrilab.Repositories;
 using Nutrilab.Services.Handlers;
+using Nutrilab.Services.Handlers.PdfHandlers;
+using Nutrilab.Shared.Enums;
 using Nutrilab.Shared.Interfaces.EntityModels;
 using Nutrilab.Shared.Models.Exceptions;
 using System.Transactions;
@@ -18,7 +20,7 @@ namespace Nutrilab.Services
         Task<List<IRecipe>> GetAllAsync();
         Task<IRecipe> GetByIdAsync(long id);
         Task<long> CreateAsync(CreateRecipeDto request);
-
+        Task<byte[]> DownloadRecipePdfByIdAsync(long id);
         Task<long> CreateImageAsync(long id, IFormFile file);
         Task UpdateAsync(long id, UpdateRecipeDto request);
         Task DeleteAsync(long id);
@@ -32,6 +34,7 @@ namespace Nutrilab.Services
         ICurrentUserService currentUserService,
         IRecipeResourceRepository recipeResourceRepository,
         IFavouriteRecipeRepository favouriteRecipeRepository,
+        PdfHandlerFactory pdfHandlerFactory,
         IMapper mapper
         ) : IRecipeService
     {
@@ -194,6 +197,22 @@ namespace Nutrilab.Services
             }
 
             await recipeResourceRepository.DeleteAsync(imgDb);
+        }
+
+        public async Task<byte[]> DownloadRecipePdfByIdAsync(long id)
+        {
+            var recipe = await repo.GetByIdExtendedAsync(id);
+            if (recipe == null)
+            {
+                throw new NotFoundException($"Recipe {id} not found");
+            }
+
+            var handler = pdfHandlerFactory.GetHandler(PdfReportType.Recipe);
+            if (handler == null)
+            {
+                throw new BadRequestException("Handler not found");
+            }
+            return await handler.GenerateAsync(id);
         }
     }
 }
