@@ -96,6 +96,11 @@ else
            class="nav-link @(CurrentPage == "recipes" ? "active" : "")">
             📖 Recipe Library
         </a>
+
+        <a href="/shopping-lists"
+           class="nav-link @(CurrentPage == "shopping-lists" ? "active" : "")">
+            🛒 Shopping Lists
+        </a>
     };
 
     private RenderFragment UserFooter => __builder =>

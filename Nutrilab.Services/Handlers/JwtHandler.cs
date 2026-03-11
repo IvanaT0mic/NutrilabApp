@@ -19,6 +19,7 @@ namespace Nutrilab.Services.Handlers
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                //public const string Email = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress";
                 new Claim(ClaimTypes.Email, user.Email),
             };
 

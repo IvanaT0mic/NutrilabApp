@@ -16,6 +16,8 @@ namespace NutrilabApp.Frontend.Startup
             services.AddScoped<UserApiService>();
             services.AddScoped<RoleApiService>();
             services.AddScoped<RecipeApiService>();
+            services.AddScoped<ShoppingListApiService>();
+            services.AddScoped<IngredientApiService>();
         }
     }
 }

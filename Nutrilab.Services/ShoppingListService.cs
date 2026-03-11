@@ -104,10 +104,13 @@ namespace Nutrilab.Services
 
             EnsureOwnership(list.CreatedByUserId);
 
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
             if (list.Items.Count > 0)
                 await itemRepo.DeleteRangeAsync(list.Items);
 
             await repo.DeleteAsync(list);
+            scope.Complete();
         }
 
         public async Task<IShoppingListItem> AddItemAsync(long shoppingListId, CreateShoppingListItemDto request)

@@ -1,0 +1,105 @@
+﻿@page "/recipes/{Id:long}/edit"
+@inherits EditRecipeBase
+
+<PageTitle>Edit Recipe - NutriLab</PageTitle>
+
+@if (IsLoading)
+{
+    <div class="text-center py-5">
+        <div class="spinner-border text-success" role="status"></div>
+    </div>
+}
+else
+{
+    <div style="max-width:640px">
+        <div class="d-flex align-items-center gap-3 mb-4">
+            <a href="/recipes/@Id" class="btn btn-outline-success btn-sm">← Back</a>
+            <h2 class="mb-0 fw-bold">Edit Recipe</h2>
+        </div>
+
+        @if (!string.IsNullOrEmpty(ErrorMessage))
+        {
+            <div class="alert alert-danger">@ErrorMessage</div>
+        }
+        @if (!string.IsNullOrEmpty(SuccessMessage))
+        {
+            <div class="alert alert-success">@SuccessMessage</div>
+        }
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Recipe Name <span class="text-danger">*</span></label>
+                    <input type="text"
+                           class="form-control"
+                           placeholder="Enter recipe name..."
+                           @bind="Name" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Description</label>
+                    <textarea class="form-control"
+                              rows="4"
+                              placeholder="Describe the recipe..."
+                              @bind="Description"></textarea>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-sm-4">
+                        <label class="form-label fw-semibold">Prep Time (min)</label>
+                        <input type="number"
+                               class="form-control"
+                               min="1"
+                               placeholder="e.g. 30"
+                               @bind="PreparationTimeMinutes" />
+                    </div>
+
+                    <div class="col-sm-4">
+                        <label class="form-label fw-semibold">Category</label>
+                        <select class="form-select"
+                                value="@SelectedMealCategory"
+                                @onchange="SetMealCategory">
+                            <option value="">— None —</option>
+                            @foreach (var cat in MealCategories)
+                            {
+                                <option value="@cat">@cat.ToString()</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <label class="form-label fw-semibold">Difficulty</label>
+                        <select class="form-select"
+                                value="@SelectedDifficultyLvl"
+                                @onchange="SetDifficulty">
+                            <option value="">— None —</option>
+                            @foreach (var lvl in DifficultyLevels)
+                            {
+                                <option value="@lvl">@lvl.ToString()</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                    <button class="btn btn-success px-4"
+                            @onclick="SaveChanges"
+                            disabled="@IsSaving">
+                        @if (IsSaving)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2" style="width:14px;height:14px"></span>
+                            <span>Saving...</span>
+                        }
+                        else
+                        {
+                            <span>💾 Save Changes</span>
+                        }
+                    </button>
+                    <a href="/recipes/@Id" class="btn btn-outline-secondary px-4">Cancel</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+}

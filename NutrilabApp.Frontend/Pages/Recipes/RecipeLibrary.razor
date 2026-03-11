@@ -66,11 +66,27 @@ else
                         <h6 class="card-title fw-bold mb-1">@recipe.Name</h6>
                     </div>
                     <div class="card-footer bg-white border-0 pt-0 pb-2">
-                        <small class="text-success fw-semibold me-2">🕐 30 min</small>
-                        <small class="text-success fw-semibold">✅ Easy</small>
+                        @if (recipe.PreparationTimeMinutes.HasValue)
+                        {
+                            <small class="text-success fw-semibold me-2">🕐 @recipe.PreparationTimeMinutes min</small>
+                        }
+                        @if (recipe.DifficultyLvl.HasValue)
+                        {
+                            <small class="text-success fw-semibold">@GetDifficultyIcon(recipe.DifficultyLvl.Value) @recipe.DifficultyLvl.Value.ToString()</small>
+                        }
                     </div>
                 </a>
             </div>
         }
     </div>
+}
+
+@code {
+    private string GetDifficultyIcon(Nutrilab.Shared.Enums.DifficultyLvl lvl) => lvl switch
+    {
+        Nutrilab.Shared.Enums.DifficultyLvl.EASY => "✅",
+        Nutrilab.Shared.Enums.DifficultyLvl.MEDIUM => "⚡",
+        Nutrilab.Shared.Enums.DifficultyLvl.HARD => "🔥",
+        _ => ""
+    };
 }

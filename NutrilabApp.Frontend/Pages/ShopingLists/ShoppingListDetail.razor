@@ -1,0 +1,182 @@
+﻿@page "/shopping-lists/{Id:long}"
+@using NutrilabApp.Frontend.Pages.ShoppingLists
+@inherits ShoppingListDetailBase
+
+<PageTitle>@(List?.Name ?? "Shopping List") - NutriLab</PageTitle>
+
+@if (IsLoading)
+{
+    <div class="text-center py-5">
+        <div class="spinner-border text-success" role="status"></div>
+    </div>
+}
+else if (List == null)
+{
+    <div class="text-center py-5 text-muted">
+        <div style="font-size:3rem">😕</div>
+        <p class="mt-2">Shopping list not found.</p>
+        <a href="/shopping-lists" class="btn btn-outline-success btn-sm mt-2">← Back</a>
+    </div>
+}
+else
+{
+    <div style="max-width:640px">
+
+        <div class="d-flex align-items-center gap-3 mb-4">
+            <a href="/shopping-lists" class="btn btn-outline-success btn-sm">← Back</a>
+            <h2 class="mb-0 fw-bold">@List.Name</h2>
+        </div>
+
+        @if (!string.IsNullOrEmpty(ErrorMessage))
+        {
+            <div class="alert alert-danger">@ErrorMessage</div>
+        }
+
+        @* Progress bar *@
+        @if (TotalCount > 0)
+        {
+            <div class="mb-4">
+                <div class="d-flex justify-content-between mb-1">
+                    <small class="text-muted fw-semibold">Progress</small>
+                    <small class="text-success fw-bold">@CheckedCount / @TotalCount items</small>
+                </div>
+                <div class="progress" style="height:8px; border-radius:10px">
+                    <div class="progress-bar bg-success"
+                         role="progressbar"
+                         style="width: @Progress.ToString("F0")%; border-radius:10px"
+                         aria-valuenow="@Progress"
+                         aria-valuemin="0"
+                         aria-valuemax="100"></div>
+                </div>
+            </div>
+        }
+
+        @* Add item button/form *@
+        <div class="mb-3">
+            @if (!ShowAddForm)
+            {
+                <button class="btn btn-outline-success btn-sm" @onclick="@(() => ShowAddForm = true)">
+                    + Add Item
+                </button>
+            }
+            else
+            {
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-3">
+                        <h6 class="fw-bold mb-3">Add Item</h6>
+                        <div class="row g-2 align-items-end">
+                            <div class="col-sm-5">
+                                <label class="form-label small fw-semibold mb-1">Name</label>
+                                <input type="text" class="form-control form-control-sm"
+                                       placeholder="e.g. Tomatoes"
+                                       @bind="NewItemName"
+                                       @onkeydown="@(async (e) => { if (e.Key == "Enter") await AddItem(); })" />
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="form-label small fw-semibold mb-1">Quantity</label>
+                                <input type="number" class="form-control form-control-sm"
+                                       @bind="NewItemQuantity" min="0" step="0.1" />
+                            </div>
+                            <div class="col-sm-2">
+                                <label class="form-label small fw-semibold mb-1">Unit</label>
+                                <input type="text" class="form-control form-control-sm"
+                                       placeholder="g, pcs" @bind="NewItemUnit" />
+                            </div>
+                            <div class="col-sm-2 d-flex gap-1">
+                                <button class="btn btn-success btn-sm" @onclick="AddItem" disabled="@IsAddingItem">
+                                    @(IsAddingItem ? "..." : "Add")
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm" @onclick="@(() => ShowAddForm = false)">✕</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @* Items list *@
+        @if (!List.Items.Any())
+        {
+            <div class="text-center py-5 text-muted">
+                <div style="font-size:2.5rem">📋</div>
+                <p class="mt-2">No items yet. Add something!</p>
+            </div>
+        }
+        else
+        {
+            @* Unchecked items *@
+            var unchecked_ = List.Items.Where(i => !i.IsChecked).ToList();
+            var checked_ = List.Items.Where(i => i.IsChecked).ToList();
+
+            @if (unchecked_.Any())
+            {
+                <div class="mb-3">
+                    <small class="text-muted fw-semibold d-block mb-2">TO BUY</small>
+                    <ul class="list-unstyled d-flex flex-column gap-2">
+                        @foreach (var item in unchecked_)
+                        {
+                            <li class="d-flex align-items-center justify-content-between px-3 py-2 rounded-2 shadow-sm"
+                                style="background:white; cursor:pointer"
+                                @onclick="@(() => ToggleItem(item))">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="form-check mb-0">
+                                        <input type="checkbox" class="form-check-input"
+                                               style="width:20px;height:20px; cursor:pointer"
+                                               checked="@item.IsChecked"
+                                               @onchange="@(() => ToggleItem(item))"
+                                               @onclick:stopPropagation="true" />
+                                    </div>
+                                    <span class="fw-semibold">@item.Name</span>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="text-muted small">@item.Quantity @item.Unit</span>
+                                    <button class="btn btn-sm btn-outline-danger py-0 px-2"
+                                            @onclick:stopPropagation="true"
+                                            @onclick="@(() => DeleteItem(item.Id))">
+                                        ✕
+                                    </button>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+
+            @* Checked items *@
+            @if (checked_.Any())
+            {
+                <div>
+                    <small class="text-muted fw-semibold d-block mb-2">IN CART ✓</small>
+                    <ul class="list-unstyled d-flex flex-column gap-2">
+                        @foreach (var item in checked_)
+                        {
+                            <li class="d-flex align-items-center justify-content-between px-3 py-2 rounded-2"
+                                style="background:#f8f8f8; cursor:pointer; opacity:0.7"
+                                @onclick="@(() => ToggleItem(item))">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="form-check mb-0">
+                                        <input type="checkbox" class="form-check-input"
+                                               style="width:20px;height:20px; cursor:pointer"
+                                               checked="@item.IsChecked"
+                                               @onchange="@(() => ToggleItem(item))"
+                                               @onclick:stopPropagation="true" />
+                                    </div>
+                                    <span class="text-decoration-line-through text-muted">@item.Name</span>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="text-muted small">@item.Quantity @item.Unit</span>
+                                    <button class="btn btn-sm btn-outline-danger py-0 px-2"
+                                            @onclick:stopPropagation="true"
+                                            @onclick="@(() => DeleteItem(item.Id))">
+                                        ✕
+                                    </button>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+        }
+
+    </div>
+}

@@ -12,5 +12,6 @@ namespace Nutrilab.Dtos.Recipes.RecipeDetailOutgoingDtos
         public int? PreparationTimeMinutes { get; set; }
         public MealCategory? MealCategory { get; set; }
         public DifficultyLvl? DifficultyLvl { get; set; }
+        public bool IsFavourite { get; set; }
     }
 }

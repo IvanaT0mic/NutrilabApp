@@ -80,7 +80,7 @@ namespace NutrilabApp.Frontend.Pages.Dashboard
             try
             {
                 var recipes = await RecipeApiService.GetAllRecipesAsync();
-                RecentRecipes = recipes?.Take(6).ToList() ?? new();
+                RecentRecipes = recipes?.ToList() ?? new();
             }
             catch { }
             finally

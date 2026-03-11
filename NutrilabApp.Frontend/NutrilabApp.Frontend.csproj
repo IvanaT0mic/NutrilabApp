@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Nutrilab.Dtos\Nutrilab.Dtos.csproj" />
+    <ProjectReference Include="..\Nutrilab.Shared\Nutrilab.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

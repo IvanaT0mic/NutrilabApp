@@ -3,18 +3,11 @@ using System.Net.Http.Json;
 
 namespace NutrilabApp.Frontend.Services.RoleServices
 {
-    public class RoleApiService
+    public class RoleApiService(HttpClient http)
     {
-        private readonly HttpClient _http;
-
-        public RoleApiService(HttpClient http)
-        {
-            _http = http;
-        }
-
         public async Task<List<RoleDto>?> GetAllRolesAsync()
         {
-            return await _http.GetFromJsonAsync<List<RoleDto>>("roles");
+            return await http.GetFromJsonAsync<List<RoleDto>>("roles");
         }
     }
 }

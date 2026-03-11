@@ -3,25 +3,18 @@ using System.Text.Json;
 
 namespace NutrilabApp.Frontend.Services
 {
-    public class TokenService
+    public class TokenService(IJSRuntime js)
     {
-        private readonly IJSRuntime _js;
-
-        public TokenService(IJSRuntime js)
-        {
-            _js = js;
-        }
-
         public async Task<string?> GetEmailAsync()
         {
-            var token = await _js.InvokeAsync<string>("sessionStorage.getItem", "token");
+            var token = await js.InvokeAsync<string>("sessionStorage.getItem", "token");
             if (string.IsNullOrEmpty(token)) return null;
             return ParseClaim(token, "email");
         }
 
         public async Task<List<string>> GetRolesAsync()
         {
-            var token = await _js.InvokeAsync<string>("sessionStorage.getItem", "token");
+            var token = await js.InvokeAsync<string>("sessionStorage.getItem", "token");
             if (string.IsNullOrEmpty(token)) return [];
             var role = ParseClaim(token, "http://schemas.microsoft.com/ws/2008/06/identity/claims/role");
             return role is null ? [] : [role];

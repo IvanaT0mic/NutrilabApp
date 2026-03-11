@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Nutrilab.Shared.Enums;
 using NutrilabApp.Frontend.Services;
 using NutrilabApp.Frontend.Services.RecipeServices;
 using NutrilabApp.Frontend.Services.RecipeServices.Models;
@@ -22,13 +23,26 @@ namespace NutrilabApp.Frontend.Pages.Recipes
         }
 
         protected string ActiveCategory { get; set; } = "All";
-        protected List<string> Categories { get; } = new() { "All", "Breakfast", "Lunch", "Dinner" };
+        protected List<string> Categories { get; } = new() { "All", "Breakfast", "Lunch", "Dinner", "Snack", "Dessert" };
 
-        protected List<RecipeCardDto> FilteredRecipes =>
-            AllRecipes
-                .Where(r => string.IsNullOrEmpty(SearchQuery) ||
-                            r.Name.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase))
-                .ToList();
+        protected List<RecipeCardDto> FilteredRecipes
+        {
+            get
+            {
+                var result = AllRecipes.AsEnumerable();
+
+                if (!string.IsNullOrEmpty(SearchQuery))
+                    result = result.Where(r => r.Name.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase));
+
+                if (ActiveCategory != "All")
+                {
+                    if (Enum.TryParse<MealCategory>(ActiveCategory.ToUpper(), out var cat))
+                        result = result.Where(r => r.MealCategory == cat);
+                }
+
+                return result.ToList();
+            }
+        }
 
         protected override async Task OnInitializedAsync()
         {
