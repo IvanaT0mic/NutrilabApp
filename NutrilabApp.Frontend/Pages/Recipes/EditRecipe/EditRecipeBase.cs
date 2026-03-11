@@ -12,7 +12,7 @@ namespace NutrilabApp.Frontend.Pages.Recipes.EditRecipe
     public class EditRecipeBase : PageBase
     {
         [Inject] protected RecipeApiService RecipeApiService { get; set; } = default!;
-        [Inject] protected IngredientApiService IngredientApiService { get; } = default!;
+        [Inject] protected IngredientApiService IngredientApiService { get; set; } = default!;
 
         [Parameter] public long Id { get; set; }
 
@@ -33,6 +33,8 @@ namespace NutrilabApp.Frontend.Pages.Recipes.EditRecipe
         protected List<RecipeIngredientRow> IngredientRows { get; set; } = new();
         protected long? NewIngredientId { get; set; }
         protected string NewIngredientQuantity { get; set; } = "";
+        protected string NewIngredientUnit { get; set; } = "";
+
 
         protected override async Task OnInitializedAsync()
         {
@@ -141,8 +143,7 @@ namespace NutrilabApp.Frontend.Pages.Recipes.EditRecipe
 
             Notifications.ShowSuccess("Recipe updated successfully!");
             await Task.Delay(1000);
-            Navigation.NavigateTo($"/recipes/{Id}");
-            IsSaving = false;
+            Navigation.NavigateTo($"/recipes");
 
             IsSaving = false;
         }
@@ -184,6 +185,14 @@ namespace NutrilabApp.Frontend.Pages.Recipes.EditRecipe
 
             NewIngredientId = null;
             NewIngredientQuantity = "";
+        }
+
+        protected void SetNewIngredient(ChangeEventArgs e)
+        {
+            if (long.TryParse(e.Value?.ToString(), out var id))
+                NewIngredientId = id;
+            else
+                NewIngredientId = null;
         }
 
         protected void RemoveIngredient(long ingredientId)

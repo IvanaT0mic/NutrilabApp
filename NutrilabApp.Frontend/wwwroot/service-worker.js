@@ -6,6 +6,44 @@
 //self.addEventListener('fetch', () => { });
 
 // DEVELOPMENT MODE — ne kesira nista
+//self.addEventListener('fetch', event => {
+//    event.respondWith(fetch(event.request));
+//});
+
+const CACHE_NAME = 'demo-pwa-cache-v2';
+const FILES_TO_CACHE = [
+    '/index.html',
+    '/manifest.json',
+    '/icon-192.jpg',
+    '/icon-512.jpg'
+];
+
+self.addEventListener('install', event => {
+    event.waitUntil((async () => {
+        const cache = await caches.open(CACHE_NAME);
+        for (const file of FILES_TO_CACHE) {
+            try {
+                await cache.add(file);
+                console.log('Cached:', file);
+            } catch (err) {
+                console.warn('Failed to cache:', file, err);
+            }
+        }
+    })());
+    self.skipWaiting();
+});
+
+self.addEventListener('activate', event => {
+    event.waitUntil(
+        caches.keys().then(keys =>
+            Promise.all(keys.map(key => key !== CACHE_NAME ? caches.delete(key) : null))
+        )
+    );
+    self.clients.claim();
+});
+
 self.addEventListener('fetch', event => {
-    event.respondWith(fetch(event.request));
+    event.respondWith(
+        caches.match(event.request).then(response => response || fetch(event.request))
+    );
 });

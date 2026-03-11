@@ -11,46 +11,37 @@
 }
 else
 {
-    <div style="max-width:640px">
+    <div style="max-width:720px">
         <div class="d-flex align-items-center gap-3 mb-4">
             <a href="/recipes/@Id" class="btn btn-outline-success btn-sm">← Back</a>
             <h2 class="mb-0 fw-bold">Edit Recipe</h2>
         </div>
 
-        <div class="card shadow-sm border-0">
+        <div class="card shadow-sm border-0 mb-3">
             <div class="card-body p-4">
+
+                <h5 class="fw-bold mb-3 border-bottom pb-2">Basic Info</h5>
 
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Recipe Name <span class="text-danger">*</span></label>
-                    <input type="text"
-                           class="form-control"
-                           placeholder="Enter recipe name..."
-                           @bind="Name" />
+                    <input type="text" class="form-control" placeholder="Enter recipe name..." @bind="Name" />
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Description</label>
-                    <textarea class="form-control"
-                              rows="4"
-                              placeholder="Describe the recipe..."
-                              @bind="Description"></textarea>
+                    <textarea class="form-control" rows="5" placeholder="Describe the recipe..."
+                              style="min-height:200px" @bind="Description"></textarea>
                 </div>
 
                 <div class="row g-3 mb-3">
                     <div class="col-sm-4">
                         <label class="form-label fw-semibold">Prep Time (min)</label>
-                        <input type="number"
-                               class="form-control"
-                               min="1"
-                               placeholder="e.g. 30"
-                               @bind="PreparationTimeMinutes" />
+                        <input type="number" class="form-control" min="1" @bind="PreparationTimeMinutes" />
                     </div>
 
                     <div class="col-sm-4">
                         <label class="form-label fw-semibold">Category</label>
-                        <select class="form-select"
-                                value="@SelectedMealCategory"
-                                @onchange="SetMealCategory">
+                        <select class="form-select" value="@SelectedMealCategory" @onchange="SetMealCategory">
                             <option value="">— None —</option>
                             @foreach (var cat in MealCategories)
                             {
@@ -61,9 +52,7 @@ else
 
                     <div class="col-sm-4">
                         <label class="form-label fw-semibold">Difficulty</label>
-                        <select class="form-select"
-                                value="@SelectedDifficultyLvl"
-                                @onchange="SetDifficulty">
+                        <select class="form-select" value="@SelectedDifficultyLvl" @onchange="SetDifficulty">
                             <option value="">— None —</option>
                             @foreach (var lvl in DifficultyLevels)
                             {
@@ -72,25 +61,81 @@ else
                         </select>
                     </div>
                 </div>
-
-                <div class="d-flex gap-2 mt-4">
-                    <button class="btn btn-success px-4"
-                            @onclick="SaveChanges"
-                            disabled="@IsSaving">
-                        @if (IsSaving)
-                        {
-                            <span class="spinner-border spinner-border-sm me-2" style="width:14px;height:14px"></span>
-                            <span>Saving...</span>
-                        }
-                        else
-                        {
-                            <span>💾 Save Changes</span>
-                        }
-                    </button>
-                    <a href="/recipes/@Id" class="btn btn-outline-secondary px-4">Cancel</a>
-                </div>
-
             </div>
+        </div>
+
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-3 border-bottom pb-2">Ingredients</h5>
+
+                @if (IngredientRows.Any())
+                {
+                    <ul class="list-unstyled d-flex flex-column gap-2 mb-3">
+                        @foreach (var row in IngredientRows)
+                        {
+                            <li class="d-flex align-items-center justify-content-between px-3 py-2 rounded-2"
+                                style="background-color: var(--nutrilab-green-pale)">
+                                <span class="fw-semibold">
+                                    <span class="text-success me-2">●</span>
+                                    @row.IngredientName
+                                </span>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="text-muted small">@row.Quantity @row.Unit</span>
+                                    <button class="btn btn-sm btn-outline-danger py-0 px-2"
+                                            @onclick="@(() => RemoveIngredient(row.IngredientId))">
+                                        ✕
+                                    </button>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p class="text-muted small mb-3">No ingredients added yet.</p>
+                }
+
+                <div class="row g-2 align-items-end">
+                    <div class="col-sm-5">
+                        <label class="form-label fw-semibold small mb-1">Ingredient</label>
+                        <select class="form-select form-select-sm" @onchange="SetNewIngredient">
+                            <option value="">Select ingredient...</option>
+                            @foreach (var ing in AvailableIngredients)
+                            {
+                                <option value="@ing.Id">@ing.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="form-label fw-semibold small mb-1">Quantity</label>
+                        <input type="number" class="form-control form-control-sm" placeholder="0"
+                               @bind="NewIngredientQuantity" min="0" step="0.1" />
+                    </div>
+                    <div class="col-sm-2">
+                        <label class="form-label fw-semibold small mb-1">Unit</label>
+                        <input type="text" class="form-control form-control-sm" placeholder="g, ml..."
+                               @bind="NewIngredientUnit" />
+                    </div>
+                    <div class="col-sm-2">
+                        <button class="btn btn-success btn-sm w-100" @onclick="AddIngredient">+ Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex gap-2 mb-5">
+            <button class="btn btn-success px-4" @onclick="SaveChanges" disabled="@IsSaving">
+                @if (IsSaving)
+                {
+                    <span class="spinner-border spinner-border-sm me-2" style="width:14px;height:14px"></span>
+                    <span>Saving...</span>
+                }
+                else
+                {
+                    <span>💾 Save Changes</span>
+                }
+            </button>
+            <a href="/recipes/@Id" class="btn btn-outline-secondary px-4">Cancel</a>
         </div>
     </div>
 }
