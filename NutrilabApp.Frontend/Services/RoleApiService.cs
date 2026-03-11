@@ -6,14 +6,14 @@ namespace NutrilabApp.Frontend.Services
 {
     public class RoleApiService(HttpClient http)
     {
-        public async Task<List<PermissionDto>> GetAllPermissionsAsync()
+        public async Task<List<PermissionDto>?> GetAllPermissionsAsync()
         {
-            return await http.GetFromJsonAsync<List<PermissionDto>>("roles/permissions");
+            return await http.GetFromJsonAsync<List<PermissionDto>>("role/permissions");
         }
 
         public async Task<bool> UpdateRolePermissionsAsync(int id, UpdateRolePermissionsDto request)
         {
-            var response = await http.PutAsJsonAsync("roles/permission", request);
+            var response = await http.PutAsJsonAsync($"roles/{id}/permission", request);
             return response.IsSuccessStatusCode;
         }
 

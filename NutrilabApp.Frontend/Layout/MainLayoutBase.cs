@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.JSInterop;
 using NutrilabApp.Frontend.Services;
+using NutrilabApp.Frontend.Services.Interceptors.ErrorHandlers;
+using NutrilabApp.Frontend.Services.NotificationServices;
 
 namespace NutrilabApp.Frontend.Layout
 {
@@ -9,6 +11,8 @@ namespace NutrilabApp.Frontend.Layout
     {
         [Inject] protected IJSRuntime JS { get; set; } = default!;
         [Inject] protected AuthService AuthService { get; set; } = default!;
+        [Inject] protected PageActionGuard ActionGuard { get; set; } = default!;
+        [Inject] protected NotificationService Notifications { get; set; } = default!;
         [Inject] protected TokenService TokenService { get; set; } = default!;
         [Inject] protected NavigationManager Navigation { get; set; } = default!;
 
@@ -55,7 +59,15 @@ namespace NutrilabApp.Frontend.Layout
 
         protected async Task Logout()
         {
-            await AuthService.LogoutAsync();
+            try
+            {
+                await ActionGuard.GuardAsync();
+                await AuthService.LogoutAsync();
+            }
+            catch (Exception ex)
+            {
+                Notifications.ShowError(ex.Message);
+            }
         }
 
         public void Dispose()

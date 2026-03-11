@@ -45,6 +45,11 @@ namespace NutrilabApp.Frontend.Pages.ShopingLists
 
         protected async Task CreateList()
         {
+            if (await ForbbitOnlineActionsAsync())
+            {
+                return;
+            }
+
             if (string.IsNullOrWhiteSpace(NewListName)) return;
             IsCreating = true;
 
@@ -67,6 +72,10 @@ namespace NutrilabApp.Frontend.Pages.ShopingLists
 
         protected async Task DeleteList(long id)
         {
+            if (await ForbbitOnlineActionsAsync())
+            {
+                return;
+            }
             var success = await ShoppingListApiService.DeleteAsync(id);
             if (success)
                 await LoadLists();

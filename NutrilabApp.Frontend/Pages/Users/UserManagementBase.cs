@@ -95,6 +95,11 @@ namespace NutrilabApp.Frontend.Pages.Users
 
         protected async Task SaveRoles()
         {
+            if (await ForbbitOnlineActionsAsync())
+            {
+                return;
+            }
+
             if (EditingUserId == null) return;
             IsSaving = true;
 
@@ -128,6 +133,11 @@ namespace NutrilabApp.Frontend.Pages.Users
 
         protected async Task ExecuteDelete()
         {
+            if (await ForbbitOnlineActionsAsync())
+            {
+                return;
+            }
+
             IsSaving = true;
             var success = await UserApiService.DeleteUserAsync(DeleteTargetId);
 

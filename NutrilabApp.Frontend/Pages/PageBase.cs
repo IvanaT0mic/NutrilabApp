@@ -12,5 +12,19 @@ namespace NutrilabApp.Frontend.Pages
         [Inject] protected NavigationManager Navigation { get; set; } = default!;
         [Inject] protected AuthService AuthService { get; set; } = default!;
         [Inject] protected TokenService TokenService { get; set; } = default!;
+
+        protected async Task<bool> ForbbitOnlineActionsAsync()
+        {
+            try
+            {
+                await ActionGuard.GuardAsync();
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Notifications.ShowError(ex.Message);
+                return true;
+            }
+        }
     }
 }

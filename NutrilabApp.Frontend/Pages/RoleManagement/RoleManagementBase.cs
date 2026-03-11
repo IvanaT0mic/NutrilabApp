@@ -49,12 +49,11 @@ namespace NutrilabApp.Frontend.Pages.RoleManagement
             IsLoading = true;
             try
             {
-                var rolesTask = RoleApiService.GetAllRolesAsync();
-                var permTask = RoleApiService.GetAllPermissionsAsync();
-                await Task.WhenAll(rolesTask, permTask);
+                var rolesTask = await RoleApiService.GetAllRolesAsync();
+                var permTask = await RoleApiService.GetAllPermissionsAsync();
 
-                Roles = rolesTask.Result ?? new();
-                AllPermissions = permTask.Result ?? new();
+                Roles = rolesTask ?? new();
+                AllPermissions = permTask ?? new();
 
                 // Re-sync selected role if it was already selected
                 if (SelectedRole != null)

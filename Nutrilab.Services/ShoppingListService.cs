@@ -1,17 +1,11 @@
 ﻿using Nutrilab.DataAccess.Models.ShoppingListItems;
 using Nutrilab.DataAccess.Models.ShoppingLists;
-using Nutrilab.DataAccess.Models.Users;
 using Nutrilab.Dtos.ShoppingList.CreateShoppingListDtos;
 using Nutrilab.Dtos.ShoppingList.UpdateShoppingListDtos;
 using Nutrilab.Repositories;
 using Nutrilab.Services.Handlers;
 using Nutrilab.Shared.Interfaces.EntityModels;
 using Nutrilab.Shared.Models.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Transactions;
 
 namespace Nutrilab.Services

@@ -19,7 +19,7 @@ namespace Nutrilab.WebApi.Controllers
             return Ok(result);
         }
 
-        [HttpGet("/{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<IngredientOutgoingDto>> GetByIdAsync([FromRoute] long id)
         {
             var ingredient = await service.GetByIdAsync(id);

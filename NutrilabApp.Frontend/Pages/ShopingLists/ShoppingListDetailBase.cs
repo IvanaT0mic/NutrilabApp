@@ -53,6 +53,11 @@ namespace NutrilabApp.Frontend.Pages.ShopingLists
 
         protected async Task ToggleItem(ShoppingListItemOutgoingDto item)
         {
+            if (await ForbbitOnlineActionsAsync())
+            {
+                return;
+            }
+
             var dto = new UpdateShoppingListItemDto
             {
                 Name = item.Name,
@@ -71,6 +76,11 @@ namespace NutrilabApp.Frontend.Pages.ShopingLists
 
         protected async Task AddItem()
         {
+            if (await ForbbitOnlineActionsAsync())
+            {
+                return;
+            }
+
             if (string.IsNullOrWhiteSpace(NewItemName)) return;
             IsAddingItem = true;
 
@@ -100,6 +110,11 @@ namespace NutrilabApp.Frontend.Pages.ShopingLists
 
         protected async Task DeleteItem(long itemId)
         {
+            if (await ForbbitOnlineActionsAsync())
+            {
+                return;
+            }
+
             var success = await ShoppingListApiService.DeleteItemAsync(Id, itemId);
             if (success && List != null)
             {
