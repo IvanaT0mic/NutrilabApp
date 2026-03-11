@@ -12,7 +12,10 @@ namespace Nutrilab.Repositories
     public sealed class PermissionRepository(EntityContext context)
         : BaseRepository<Permission>(context), IPermissionRepository
     {
-        public Task<List<Permission>> GetAllAsync() =>
-            GetQueryable().OrderBy(p => p.Name).ToListAsync();
+        public Task<List<Permission>> GetAllAsync()
+        {
+            return GetQueryable()
+                .OrderBy(p => p.Name).ToListAsync();
+        }
     }
 }

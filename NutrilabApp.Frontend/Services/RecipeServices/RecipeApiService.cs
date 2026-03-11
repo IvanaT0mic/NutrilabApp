@@ -68,5 +68,11 @@ namespace NutrilabApp.Frontend.Services.RecipeServices
             var response = await http.DeleteAsync($"recipes/{id}");
             return response.IsSuccessStatusCode;
         }
+
+        public async Task<bool> UpdateRecipeIngredientsAsync(long id, PatchRecipeDto req)
+        {
+            var response = await http.PatchAsJsonAsync($"recipes/{id}", req);
+            return response.IsSuccessStatusCode;
+        }
     }
 }

@@ -53,8 +53,7 @@ namespace NutrilabApp.Frontend.Layout
         private void UpdateCurrentPage()
         {
             var uri = new Uri(Navigation.Uri);
-            var segments = uri.AbsolutePath.Trim('/').Split('/');
-            CurrentPage = segments.FirstOrDefault() ?? "";
+            CurrentPage = uri.AbsolutePath.Trim('/');
         }
 
         protected async Task Logout()

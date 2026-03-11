@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Nutrilab.Dtos.Ingredients;
+using Nutrilab.Dtos.Recipes.CreateRecipeDtos;
 using Nutrilab.Dtos.Recipes.UpdateRecipeDtos;
 using Nutrilab.Shared.Enums;
+using NutrilabApp.Frontend.Pages.Recipes.CreateRecipe.Models;
 using NutrilabApp.Frontend.Services;
 using NutrilabApp.Frontend.Services.RecipeServices;
 
@@ -9,21 +12,27 @@ namespace NutrilabApp.Frontend.Pages.Recipes.EditRecipe
     public class EditRecipeBase : PageBase
     {
         [Inject] protected RecipeApiService RecipeApiService { get; set; } = default!;
+        [Inject] protected IngredientApiService IngredientApiService { get; } = default!;
 
         [Parameter] public long Id { get; set; }
 
         protected bool IsLoading { get; set; } = true;
         protected bool IsSaving { get; set; } = false;
 
-        // Form fields
+        // Recipe fields
         protected string Name { get; set; } = "";
         protected string Description { get; set; } = "";
         protected int? PreparationTimeMinutes { get; set; }
         protected MealCategory? SelectedMealCategory { get; set; }
         protected DifficultyLvl? SelectedDifficultyLvl { get; set; }
-
         protected List<MealCategory> MealCategories { get; } = Enum.GetValues<MealCategory>().ToList();
         protected List<DifficultyLvl> DifficultyLevels { get; } = Enum.GetValues<DifficultyLvl>().ToList();
+
+        // Ingredients
+        protected List<IngredientOutgoingDto> AvailableIngredients { get; set; } = new();
+        protected List<RecipeIngredientRow> IngredientRows { get; set; } = new();
+        protected long? NewIngredientId { get; set; }
+        protected string NewIngredientQuantity { get; set; } = "";
 
         protected override async Task OnInitializedAsync()
         {
@@ -43,6 +52,8 @@ namespace NutrilabApp.Frontend.Pages.Recipes.EditRecipe
 
             try
             {
+                AvailableIngredients = await IngredientApiService.GetAllAsync() ?? new();
+
                 var recipe = await RecipeApiService.GetRecipeByIdAsync(Id);
                 if (recipe == null)
                 {
@@ -55,6 +66,14 @@ namespace NutrilabApp.Frontend.Pages.Recipes.EditRecipe
                 PreparationTimeMinutes = recipe.PreparationTimeMinutes;
                 SelectedMealCategory = recipe.MealCategory;
                 SelectedDifficultyLvl = recipe.DifficultyLvl;
+
+                IngredientRows = recipe.Ingredients.Select(i => new RecipeIngredientRow
+                {
+                    IngredientId = i.IngredientId,
+                    IngredientName = i.IngredientName,
+                    Quantity = i.Quantity,
+                    Unit = i.Unit
+                }).ToList();
             }
             catch
             {
@@ -68,6 +87,11 @@ namespace NutrilabApp.Frontend.Pages.Recipes.EditRecipe
 
         protected async Task SaveChanges()
         {
+            if (await ForbbitOnlineActionsAsync())
+            {
+                return;
+            }
+
             if (string.IsNullOrWhiteSpace(Name))
             {
                 Notifications.ShowError("Recipe name is required.");
@@ -95,7 +119,30 @@ namespace NutrilabApp.Frontend.Pages.Recipes.EditRecipe
             else
             {
                 Notifications.ShowError("Failed to save changes.");
+                return;
             }
+
+            var patchDto = new PatchRecipeDto
+            {
+                RecipeIngredients = IngredientRows.Select(r => new RecipeIngredientDto
+                {
+                    IngredientId = r.IngredientId,
+                    Quantity = r.Quantity,
+                }).ToList()
+            };
+            try
+            {
+                await RecipeApiService.UpdateRecipeIngredientsAsync(Id, patchDto);
+            }
+            catch
+            {
+                Notifications.ShowError("Failed to save ingredients.");
+            }
+
+            Notifications.ShowSuccess("Recipe updated successfully!");
+            await Task.Delay(1000);
+            Navigation.NavigateTo($"/recipes/{Id}");
+            IsSaving = false;
 
             IsSaving = false;
         }
@@ -114,6 +161,34 @@ namespace NutrilabApp.Frontend.Pages.Recipes.EditRecipe
                 SelectedDifficultyLvl = null;
             else if (Enum.TryParse<DifficultyLvl>(e.Value.ToString(), out var val))
                 SelectedDifficultyLvl = val;
+        }
+
+        protected void AddIngredient()
+        {
+            if (NewIngredientId == null) return;
+            var ing = AvailableIngredients.FirstOrDefault(i => i.Id == NewIngredientId.Value);
+            if (ing == null) return;
+
+            if (IngredientRows.Any(r => r.IngredientId == NewIngredientId.Value))
+            {
+                Notifications.ShowError("This ingredient is already added.");
+                return;
+            }
+
+            IngredientRows.Add(new RecipeIngredientRow
+            {
+                IngredientId = ing.Id,
+                IngredientName = ing.Name,
+                Quantity = decimal.TryParse(NewIngredientQuantity, out var q) ? q : 0,
+            });
+
+            NewIngredientId = null;
+            NewIngredientQuantity = "";
+        }
+
+        protected void RemoveIngredient(long ingredientId)
+        {
+            IngredientRows.RemoveAll(r => r.IngredientId == ingredientId);
         }
     }
 }

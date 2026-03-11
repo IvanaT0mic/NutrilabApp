@@ -76,7 +76,7 @@ namespace Nutrilab.WebApi.Controllers
             return NoContent();
         }
 
-        [HttpPatch("/{id}")]
+        [HttpPatch("{id}")]
         public async Task<ActionResult> UpdateRecipeIngredientDetailsAsync([FromRoute] long id, [FromBody] PatchRecipeDto updateRecipeDto)
         {
             await recipeIngredientService.UpateRecipeIngreditents(id, updateRecipeDto.RecipeIngredients);

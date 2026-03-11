@@ -10,7 +10,7 @@ namespace Nutrilab.WebApi.Controllers
     [ApiController]
     [Route("[controller]")]
     [Authorize(Roles = "Admin,Maintainer")]
-    public class RoleController(RoleService roleService, IMapper mapper) : ControllerBase
+    public class RoleController(IRoleService roleService, IMapper mapper) : ControllerBase
     {
         [HttpGet]
         public async Task<ActionResult<List<RoleDto>>> GetAll()
@@ -24,7 +24,8 @@ namespace Nutrilab.WebApi.Controllers
         public async Task<ActionResult<List<PermissionDto>>> GetAllPermissions()
         {
             var permissions = await roleService.GetAllPermissionsAsync();
-            return Ok(permissions);
+            var res = mapper.Map<List<PermissionDto>>(permissions);
+            return Ok(res);
         }
 
         [HttpPut("{id}/permissions")]

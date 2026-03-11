@@ -13,7 +13,7 @@ namespace NutrilabApp.Frontend.Services
 
         public async Task<bool> UpdateRolePermissionsAsync(int id, UpdateRolePermissionsDto request)
         {
-            var response = await http.PutAsJsonAsync($"roles/{id}/permission", request);
+            var response = await http.PutAsJsonAsync($"role/{id}/permissions", request);
             return response.IsSuccessStatusCode;
         }
 
