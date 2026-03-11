@@ -17,15 +17,6 @@ else
             <h2 class="mb-0 fw-bold">Create Recipe</h2>
         </div>
 
-        @if (!string.IsNullOrEmpty(ErrorMessage))
-        {
-            <div class="alert alert-danger">@ErrorMessage</div>
-        }
-        @if (!string.IsNullOrEmpty(SuccessMessage))
-        {
-            <div class="alert alert-success">@SuccessMessage</div>
-        }
-
         <div class="card shadow-sm border-0 mb-3">
             <div class="card-body p-4">
                 <h5 class="fw-bold mb-3 border-bottom pb-2">Basic Info</h5>

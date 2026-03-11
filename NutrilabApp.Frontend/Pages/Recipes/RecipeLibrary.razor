@@ -6,6 +6,25 @@
 <div class="mb-4">
     <h2 class="mb-3">Recipe Library</h2>
 
+    <!-- Tabs: All / My Favourites -->
+    <ul class="nav nav-tabs mb-3">
+        <li class="nav-item">
+            <button class="nav-link @(ActiveTab == "All" ? "active" : "")"
+                    @onclick='() => SetTab("All")'>
+                📖 All Recipes
+                <span class="badge ms-1" style="background-color: var(--nutrilab-green-light); color: var(--nutrilab-green)">
+                    @AllRecipes.Count
+                </span>
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link @(ActiveTab == "Favourites" ? "active" : "")"
+                    @onclick='() => SetTab("Favourites")'>
+                ⭐ My Favourites
+            </button>
+        </li>
+    </ul>
+
     <div class="input-group mb-3" style="max-width: 480px">
         <span class="input-group-text bg-white">🔍</span>
         <input type="text"
@@ -27,7 +46,7 @@
     </div>
 </div>
 
-@if (IsLoading)
+@if (IsLoading || IsFavouritesLoading)
 {
     <div class="text-center py-5">
         <div class="spinner-border text-success" role="status"></div>
@@ -37,8 +56,17 @@
 else if (!FilteredRecipes.Any())
 {
     <div class="text-center py-5 text-muted">
-        <div style="font-size: 3rem">🍽️</div>
-        <p class="mt-2">No recipes found.</p>
+        <div style="font-size: 3rem">@(ActiveTab == "Favourites" ? "⭐" : "🍽️")</div>
+        <p class="mt-2">
+            @if (ActiveTab == "Favourites")
+            {
+                <span>No favourite recipes yet. Mark some recipes as favourites!</span>
+            }
+            else
+            {
+                <span>No recipes found.</span>
+            }
+        </p>
     </div>
 }
 else

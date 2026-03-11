@@ -31,6 +31,7 @@ namespace Nutrilab.Services.Startup
             services.AddScoped<IRecipeResourceRepository, RecipeResourceRepository>();
             services.AddScoped<IShoppingListRepository, ShoppingListRepository>();
             services.AddScoped<IShoppingListItemRepository, ShoppingListItemRepository>();
+            services.AddScoped<IPermissionRepository, PermissionRepository>();
 
             services.ConfigureContext(connectionString);
         }

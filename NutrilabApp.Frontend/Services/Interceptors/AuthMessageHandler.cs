@@ -1,6 +1,6 @@
 ﻿using Microsoft.JSInterop;
 
-namespace NutrilabApp.Frontend.Services
+namespace NutrilabApp.Frontend.Services.Interceptors
 {
     public class AuthMessageHandler(IJSRuntime js) : DelegatingHandler
     {

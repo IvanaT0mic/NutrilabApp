@@ -1,5 +1,4 @@
 ﻿@page "/shopping-lists/{Id:long}"
-@using NutrilabApp.Frontend.Pages.ShoppingLists
 @inherits ShoppingListDetailBase
 
 <PageTitle>@(List?.Name ?? "Shopping List") - NutriLab</PageTitle>
@@ -27,10 +26,6 @@ else
             <h2 class="mb-0 fw-bold">@List.Name</h2>
         </div>
 
-        @if (!string.IsNullOrEmpty(ErrorMessage))
-        {
-            <div class="alert alert-danger">@ErrorMessage</div>
-        }
 
         @* Progress bar *@
         @if (TotalCount > 0)

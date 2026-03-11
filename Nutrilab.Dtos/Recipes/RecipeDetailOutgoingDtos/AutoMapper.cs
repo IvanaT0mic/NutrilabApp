@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Nutrilab.Shared.Interfaces.EntityModels;
+using Nutrilab.Shared.Interfaces.ServiceModels;
 
 namespace Nutrilab.Dtos.Recipes.RecipeDetailOutgoingDtos
 {
@@ -7,7 +8,7 @@ namespace Nutrilab.Dtos.Recipes.RecipeDetailOutgoingDtos
     {
         public AutoMapper()
         {
-            CreateMap<IRecipe, RecipeDetailOutgoingDto>()
+            CreateMap<IRecipeDetailsServiceModel, RecipeDetailOutgoingDto>()
                 .ForMember(
                     dest => dest.Ingredients,
                     opt => opt.MapFrom(src => src.RecipeIngredients))

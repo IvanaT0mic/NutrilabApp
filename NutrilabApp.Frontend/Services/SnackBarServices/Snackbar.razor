@@ -1,0 +1,16 @@
+﻿@using NutrilabApp.Frontend.Services.NotificationServices.Models
+@implements IDisposable
+
+@if (_toasts.Any())
+{
+    <div class="snackbar-container">
+        @foreach (var toast in _toasts)
+        {
+            <div class="snackbar-toast snackbar-@toast.Type.ToString().ToLower() @(toast.Exiting ? "snackbar-exit" : "snackbar-enter")">
+                <span class="snackbar-icon">@(toast.Type == NotificationType.Success ? "✓" : "✕")</span>
+                <span class="snackbar-message">@toast.Message</span>
+                <button class="snackbar-close" @onclick="() => Remove(toast)">×</button>
+            </div>
+        }
+    </div>
+}

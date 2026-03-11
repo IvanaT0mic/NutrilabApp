@@ -1,7 +1,7 @@
 ﻿using Nutrilab.Dtos.Users;
 using System.Net.Http.Json;
 
-namespace NutrilabApp.Frontend.Services.UserServices
+namespace NutrilabApp.Frontend.Services
 {
     public class UserApiService(HttpClient http)
     {

@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using NutrilabApp.Frontend;
-using NutrilabApp.Frontend.Services;
+using NutrilabApp.Frontend.Services.Interceptors;
+using NutrilabApp.Frontend.Services.Interceptors.ErrorHandlers;
 using NutrilabApp.Frontend.Startup;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -20,7 +21,8 @@ builder.Services.AddHttpClient("API", client =>
 {
     client.BaseAddress = new Uri("https://localhost:7049/");
 })
-.AddHttpMessageHandler<AuthMessageHandler>();
+.AddHttpMessageHandler<AuthMessageHandler>()
+.AddHttpMessageHandler<ErrorInterceptor>();
 
 builder.Services.AddScoped(sp =>
     sp.GetRequiredService<IHttpClientFactory>().CreateClient("API"));

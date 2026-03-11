@@ -7,6 +7,7 @@ using Nutrilab.Dtos.Recipes.RecipeOutgoingDto;
 using Nutrilab.Dtos.Recipes.Resoruces;
 using Nutrilab.Dtos.Recipes.UpdateRecipeDtos;
 using Nutrilab.Services;
+using Nutrilab.Services.RecipeServices;
 
 namespace Nutrilab.WebApi.Controllers
 {
@@ -23,6 +24,14 @@ namespace Nutrilab.WebApi.Controllers
         public async Task<ActionResult<List<RecipeOutgoingDto>>> GetAllAsync()
         {
             var response = await recipeService.GetAllAsync();
+            var result = mapper.Map<List<RecipeOutgoingDto>>(response);
+            return Ok(result);
+        }
+
+        [HttpGet("my/favourites")]
+        public async Task<ActionResult<List<RecipeOutgoingDto>>> GetAllCurrentFavsAsync()
+        {
+            var response = await recipeService.GetAllCurrentFavsAsync();
             var result = mapper.Map<List<RecipeOutgoingDto>>(response);
             return Ok(result);
         }

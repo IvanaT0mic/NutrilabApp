@@ -6,14 +6,16 @@ using NutrilabApp.Frontend.Services.RecipeServices.Models;
 
 namespace NutrilabApp.Frontend.Pages.Recipes
 {
-    public class RecipeLibraryBase : ComponentBase
+    public class RecipeLibraryBase : PageBase
     {
         [Inject] protected RecipeApiService RecipeApiService { get; set; } = default!;
-        [Inject] protected AuthService AuthService { get; set; } = default!;
-        [Inject] protected NavigationManager Navigation { get; set; } = default!;
 
         protected List<RecipeCardDto> AllRecipes { get; set; } = new();
+        protected List<RecipeCardDto> FavouriteRecipes { get; set; } = new();
+
         protected bool IsLoading { get; set; } = true;
+        protected bool IsFavouritesLoading { get; set; } = true;
+
 
         private string _searchQuery = "";
         protected string SearchQuery
@@ -22,6 +24,7 @@ namespace NutrilabApp.Frontend.Pages.Recipes
             set { _searchQuery = value; StateHasChanged(); }
         }
 
+        protected string ActiveTab { get; set; } = "All";
         protected string ActiveCategory { get; set; } = "All";
         protected List<string> Categories { get; } = new() { "All", "Breakfast", "Lunch", "Dinner", "Snack", "Dessert" };
 
@@ -29,7 +32,10 @@ namespace NutrilabApp.Frontend.Pages.Recipes
         {
             get
             {
-                var result = AllRecipes.AsEnumerable();
+                IEnumerable<RecipeCardDto> result =
+                    ActiveTab == "Favourites"
+                    ? FavouriteRecipes
+                    : AllRecipes;
 
                 if (!string.IsNullOrEmpty(SearchQuery))
                     result = result.Where(r => r.Name.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase));
@@ -55,12 +61,19 @@ namespace NutrilabApp.Frontend.Pages.Recipes
             try
             {
                 AllRecipes = await RecipeApiService.GetAllRecipesAsync() ?? new();
+                FavouriteRecipes = await RecipeApiService.GetAllMineFavouriteRecipesAsync() ?? new();
             }
             catch { }
             finally
             {
                 IsLoading = false;
+                IsFavouritesLoading = false;
             }
+        }
+
+        protected void SetTab(string tab)
+        {
+            ActiveTab = tab;
         }
 
         protected void SetCategory(string category)

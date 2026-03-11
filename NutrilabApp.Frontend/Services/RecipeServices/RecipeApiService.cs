@@ -13,6 +13,11 @@ namespace NutrilabApp.Frontend.Services.RecipeServices
             return await http.GetFromJsonAsync<List<RecipeCardDto>>("recipes");
         }
 
+        public async Task<List<RecipeCardDto>?> GetAllMineFavouriteRecipesAsync()
+        {
+            return await http.GetFromJsonAsync<List<RecipeCardDto>>("recipes/my/favourites");
+        }
+
         public async Task<RecipeDetailOutgoingDto?> GetRecipeByIdAsync(long id)
         {
             return await http.GetFromJsonAsync<RecipeDetailOutgoingDto>($"recipes/{id}");

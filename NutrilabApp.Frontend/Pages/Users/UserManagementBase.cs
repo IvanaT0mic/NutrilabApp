@@ -2,18 +2,13 @@
 using Nutrilab.Dtos.Roles;
 using Nutrilab.Dtos.Users;
 using NutrilabApp.Frontend.Services;
-using NutrilabApp.Frontend.Services.RoleServices;
-using NutrilabApp.Frontend.Services.UserServices;
 
 namespace NutrilabApp.Frontend.Pages.Users
 {
-    public class UserManagementBase : ComponentBase
+    public class UserManagementBase : PageBase
     {
         [Inject] protected UserApiService UserApiService { get; set; } = default!;
         [Inject] protected RoleApiService RoleApiService { get; set; } = default!;
-        [Inject] protected TokenService TokenService { get; set; } = default!;
-        [Inject] protected AuthService AuthService { get; set; } = default!;
-        [Inject] protected NavigationManager Navigation { get; set; } = default!;
 
         protected List<UserDto> Users { get; set; } = new();
         protected List<RoleDto> AllRoles { get; set; } = new();
@@ -21,9 +16,6 @@ namespace NutrilabApp.Frontend.Pages.Users
         protected bool IsLoading { get; set; } = true;
         protected bool IsSaving { get; set; } = false;
         protected bool CanDelete { get; set; } = false;
-
-        protected string ErrorMessage { get; set; } = "";
-        protected string SuccessMessage { get; set; } = "";
 
         // Edit state
         protected long? EditingUserId { get; set; }
@@ -59,7 +51,6 @@ namespace NutrilabApp.Frontend.Pages.Users
         private async Task LoadData()
         {
             IsLoading = true;
-            ErrorMessage = "";
             try
             {
                 var usersTask = UserApiService.GetAllUsersAsync();
@@ -71,7 +62,7 @@ namespace NutrilabApp.Frontend.Pages.Users
             }
             catch
             {
-                ErrorMessage = "Failed to load users. Check your connection.";
+                Notifications.ShowError("Failed to load users. Check your connection.");
             }
             finally
             {
@@ -86,8 +77,6 @@ namespace NutrilabApp.Frontend.Pages.Users
                 .Where(r => user.Roles.Contains(r.Name))
                 .Select(r => r.Id)
                 .ToList();
-            SuccessMessage = "";
-            ErrorMessage = "";
         }
 
         protected void ToggleRole(int roleId, bool isChecked)
@@ -108,19 +97,18 @@ namespace NutrilabApp.Frontend.Pages.Users
         {
             if (EditingUserId == null) return;
             IsSaving = true;
-            ErrorMessage = "";
 
             var success = await UserApiService.UpdateUserRolesAsync(EditingUserId.Value, EditingRoleIds);
 
             if (success)
             {
-                SuccessMessage = "Roles updated successfully!";
+                Notifications.ShowSuccess("Roles updated successfully!");
                 EditingUserId = null;
                 await LoadData();
             }
             else
             {
-                ErrorMessage = "Failed to update roles.";
+                Notifications.ShowError("Failed to update roles.");
             }
 
             IsSaving = false;
@@ -145,13 +133,13 @@ namespace NutrilabApp.Frontend.Pages.Users
 
             if (success)
             {
-                SuccessMessage = $"User {DeleteTargetEmail} deleted.";
+                Notifications.ShowSuccess($"User {DeleteTargetEmail} deleted.");
                 ShowDeleteConfirm = false;
                 await LoadData();
             }
             else
             {
-                ErrorMessage = "Failed to delete user. They may have recipes.";
+                Notifications.ShowError("Failed to delete user. They may have recipes.");
                 ShowDeleteConfirm = false;
             }
             IsSaving = false;

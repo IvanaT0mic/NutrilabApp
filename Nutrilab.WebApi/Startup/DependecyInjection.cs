@@ -1,5 +1,6 @@
 ﻿using Nutrilab.Services;
 using Nutrilab.Services.AuthServices;
+using Nutrilab.Services.RecipeServices;
 using Nutrilab.Services.Startup;
 
 namespace Nutrilab.WebApi.Startup

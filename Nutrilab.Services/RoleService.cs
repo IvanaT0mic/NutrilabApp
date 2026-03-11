@@ -10,17 +10,25 @@ namespace Nutrilab.Services
     public interface IRoleService
     {
         Task<List<IRole>> GetAllAsync();
+        Task<List<IPermission>> GetAllPermissionsAsync();
         Task UpdatePermissionsAsync(int id, UpdateRolePermissionsDto request);
     }
 
     public sealed class RoleService(
             IRoleRepository roleRepo,
+            IPermissionRepository permissionRepository,
             IRolePermissionRepository rolePermissionRepo) : IRoleService
     {
         public async Task<List<IRole>> GetAllAsync()
         {
             var roles = await roleRepo.GetAllWithPermissionsAsync();
             return roles.ToList<IRole>();
+        }
+
+        public async Task<List<IPermission>> GetAllPermissionsAsync()
+        {
+            var permissions = await permissionRepository.GetAllAsync();
+            return permissions.ToList<IPermission>();
         }
 
         public async Task UpdatePermissionsAsync(int id, UpdateRolePermissionsDto request)

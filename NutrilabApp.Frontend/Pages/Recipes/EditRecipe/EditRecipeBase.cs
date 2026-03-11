@@ -6,19 +6,14 @@ using NutrilabApp.Frontend.Services.RecipeServices;
 
 namespace NutrilabApp.Frontend.Pages.Recipes.EditRecipe
 {
-    public class EditRecipeBase : ComponentBase
+    public class EditRecipeBase : PageBase
     {
         [Inject] protected RecipeApiService RecipeApiService { get; set; } = default!;
-        [Inject] protected AuthService AuthService { get; set; } = default!;
-        [Inject] protected TokenService TokenService { get; set; } = default!;
-        [Inject] protected NavigationManager Navigation { get; set; } = default!;
 
         [Parameter] public long Id { get; set; }
 
         protected bool IsLoading { get; set; } = true;
         protected bool IsSaving { get; set; } = false;
-        protected string? ErrorMessage { get; set; }
-        protected string? SuccessMessage { get; set; }
 
         // Form fields
         protected string Name { get; set; } = "";
@@ -63,7 +58,7 @@ namespace NutrilabApp.Frontend.Pages.Recipes.EditRecipe
             }
             catch
             {
-                ErrorMessage = "Failed to load recipe.";
+                Notifications.ShowError("Failed to load recipe.");
             }
             finally
             {
@@ -75,12 +70,11 @@ namespace NutrilabApp.Frontend.Pages.Recipes.EditRecipe
         {
             if (string.IsNullOrWhiteSpace(Name))
             {
-                ErrorMessage = "Recipe name is required.";
+                Notifications.ShowError("Recipe name is required.");
                 return;
             }
 
             IsSaving = true;
-            ErrorMessage = null;
 
             var dto = new UpdateRecipeDto
             {
@@ -94,13 +88,13 @@ namespace NutrilabApp.Frontend.Pages.Recipes.EditRecipe
             var success = await RecipeApiService.UpdateRecipeAsync(Id, dto);
             if (success)
             {
-                SuccessMessage = "Recipe updated successfully!";
+                Notifications.ShowSuccess("Recipe updated successfully!");
                 await Task.Delay(1200);
                 Navigation.NavigateTo($"/recipes/{Id}");
             }
             else
             {
-                ErrorMessage = "Failed to save changes.";
+                Notifications.ShowError("Failed to save changes.");
             }
 
             IsSaving = false;

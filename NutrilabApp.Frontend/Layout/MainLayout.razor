@@ -1,4 +1,5 @@
-﻿@inherits MainLayoutBase
+﻿@using NutrilabApp.Frontend.Services.SnackBarServices
+@inherits MainLayoutBase
 
 @if (!IsReady)
 {
@@ -8,7 +9,6 @@
 }
 else
 {
-    <!-- DESKTOP sidebar — vidljiv samo na lg+ -->
     <aside class="sidebar-desktop d-none d-lg-flex flex-column">
         <div class="sidebar-logo">🥗 NutriLab</div>
         <nav class="sidebar-nav nav flex-column">
@@ -19,7 +19,6 @@ else
         </div>
     </aside>
 
-    <!-- MOBILE topbar — vidljiv samo ispod lg -->
     <nav class="mobile-topbar d-flex d-lg-none">
         <span class="mobile-topbar-title">🥗 NutriLab</span>
         <button class="btn btn-sm btn-outline-light"
@@ -31,7 +30,6 @@ else
         </button>
     </nav>
 
-    <!-- MOBILE offcanvas -->
     <div class="offcanvas offcanvas-start"
          style="background-color:#1b4332; width:260px; color:white"
          tabindex="-1"
@@ -54,10 +52,11 @@ else
         </div>
     </div>
 
-    <!-- MAIN CONTENT -->
     <main class="main-content">
         @Body
     </main>
+
+    <Snackbar />
 }
 
 @code {
@@ -76,11 +75,19 @@ else
             </a>
         }
 
-        if (IsAdmin)
+        if (IsAdminOrMaintainer)
         {
             <a href="/roles"
                class="nav-link @(CurrentPage == "roles" ? "active" : "")">
                 🔐 Roles & Permissions
+            </a>
+        }
+
+        if (IsEditorOrAdmin)
+        {
+            <a href="/ingredients"
+               class="nav-link @(CurrentPage == "ingredients" ? "active" : "")">
+                🥦 Ingredients
             </a>
         }
 
@@ -118,6 +125,14 @@ else
                 </div>
             </div>
         </div>
+        @if (!IsOnline)
+        {
+            <div class="d-flex align-items-center gap-2 mb-2 px-2 py-1 rounded-2"
+                 style="background-color:#fee2e2; color:#dc2626; font-size:0.78rem; font-weight:600">
+                <span>📵</span>
+                <span>You are offline</span>
+            </div>
+        }
         <button class="btn btn-sm btn-outline-danger w-100" @onclick="Logout">
             Logout
         </button>

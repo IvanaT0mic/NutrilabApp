@@ -5,19 +5,16 @@ using Nutrilab.Dtos.ShoppingList.ShoppingListOutgoingDtos;
 using Nutrilab.Dtos.ShoppingList.UpdateShoppingListDtos;
 using NutrilabApp.Frontend.Services;
 
-namespace NutrilabApp.Frontend.Pages.ShoppingLists
+namespace NutrilabApp.Frontend.Pages.ShopingLists
 {
-    public class ShoppingListDetailBase : ComponentBase
+    public class ShoppingListDetailBase : PageBase
     {
         [Inject] protected ShoppingListApiService ShoppingListApiService { get; set; } = default!;
-        [Inject] protected AuthService AuthService { get; set; } = default!;
-        [Inject] protected NavigationManager Navigation { get; set; } = default!;
 
         [Parameter] public long Id { get; set; }
 
         protected ShoppingListDetailOutgoingDto? List { get; set; }
         protected bool IsLoading { get; set; } = true;
-        protected string? ErrorMessage { get; set; }
 
         // Add item form
         protected bool ShowAddForm { get; set; } = false;
@@ -46,7 +43,7 @@ namespace NutrilabApp.Frontend.Pages.ShoppingLists
             }
             catch
             {
-                ErrorMessage = "Failed to load shopping list.";
+                Notifications.ShowError("Failed to load shopping list.");
             }
             finally
             {
@@ -95,7 +92,7 @@ namespace NutrilabApp.Frontend.Pages.ShoppingLists
             }
             else
             {
-                ErrorMessage = "Failed to add item.";
+                Notifications.ShowError("Failed to add item.");
             }
 
             IsAddingItem = false;

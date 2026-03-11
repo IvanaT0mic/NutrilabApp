@@ -8,17 +8,20 @@ using Nutrilab.Dtos.Recipes.UpdateRecipeDtos;
 using Nutrilab.Repositories;
 using Nutrilab.Services.Handlers;
 using Nutrilab.Services.Handlers.PdfHandlers;
+using Nutrilab.Services.RecipeServices.Models;
 using Nutrilab.Shared.Enums;
 using Nutrilab.Shared.Interfaces.EntityModels;
+using Nutrilab.Shared.Interfaces.ServiceModels;
 using Nutrilab.Shared.Models.Exceptions;
 using System.Transactions;
 
-namespace Nutrilab.Services
+namespace Nutrilab.Services.RecipeServices
 {
     public interface IRecipeService
     {
         Task<List<IRecipe>> GetAllAsync();
-        Task<IRecipe> GetByIdAsync(long id);
+        Task<IRecipeDetailsServiceModel> GetByIdAsync(long id);
+        Task<List<IRecipe>> GetAllCurrentFavsAsync();
         Task<long> CreateAsync(CreateRecipeDto request);
         Task<byte[]> DownloadRecipePdfByIdAsync(long id);
         Task<long> CreateImageAsync(long id, IFormFile file);
@@ -44,14 +47,18 @@ namespace Nutrilab.Services
             return recipes.ToList<IRecipe>();
         }
 
-        public async Task<IRecipe> GetByIdAsync(long id)
+        public async Task<IRecipeDetailsServiceModel> GetByIdAsync(long id)
         {
+            var currentUser = currentUserService.GetCurrentUser();
             var recipe = await repo.GetByIdExtendedAsync(id);
             if (recipe == null)
             {
                 throw new NotFoundException($"Recipe {id} not found");
             }
-            return recipe;
+
+            var res = mapper.Map<RecipeDetailsServiceModel>(recipe);
+            res.IsFavourite = recipe.FavouriteUsers.Any(x => x.UserId == currentUser.Id);
+            return res;
         }
 
         public async Task<long> CreateAsync(CreateRecipeDto request)
@@ -100,7 +107,8 @@ namespace Nutrilab.Services
             }
 
             var currentUser = currentUserService.GetCurrentUser();
-            if (recipe.CreatedByUserId != currentUser.Id)
+            var isAdmin = currentUser.Roles.Contains("Admin");
+            if (!isAdmin && recipe.CreatedByUserId != currentUser.Id)
             {
                 throw new UnauthorizedException("You can only edit your own recipes");
             }
@@ -213,6 +221,13 @@ namespace Nutrilab.Services
                 throw new BadRequestException("Handler not found");
             }
             return await handler.GenerateAsync(id);
+        }
+
+        public async Task<List<IRecipe>> GetAllCurrentFavsAsync()
+        {
+            var current = currentUserService.GetCurrentUser();
+            var recipes = await repo.GetAllFavsByUserIdAsync(current.Id);
+            return recipes.ToList<IRecipe>();
         }
     }
 }

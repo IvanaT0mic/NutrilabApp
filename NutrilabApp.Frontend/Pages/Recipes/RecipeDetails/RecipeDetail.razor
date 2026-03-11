@@ -12,7 +12,6 @@
 else if (Recipe == null)
 {
     <div class="text-center py-5 text-muted">
-        <div style="font-size:3rem">😕</div>
         <p class="mt-2">Recipe not found.</p>
         <a href="/recipes" class="btn btn-outline-success btn-sm mt-2">← Back to Library</a>
     </div>
@@ -22,15 +21,6 @@ else
     <div style="max-width:720px">
 
         <a href="/recipes" class="btn btn-outline-success btn-sm mb-3">← Back</a>
-
-        @if (!string.IsNullOrEmpty(SuccessMessage))
-        {
-            <div class="alert alert-success alert-dismissible py-2 mb-3">@SuccessMessage</div>
-        }
-        @if (!string.IsNullOrEmpty(ErrorMessage))
-        {
-            <div class="alert alert-danger py-2 mb-3">@ErrorMessage</div>
-        }
 
         @if (!string.IsNullOrEmpty(Recipe.ImageBase64))
         {
@@ -55,9 +45,9 @@ else
 
                     <div class="d-flex gap-2 flex-shrink-0">
                         @* Favourite button *@
-                        <button class="btn @(IsFavourite ? "btn-danger" : "btn-outline-secondary") btn-sm rounded-circle"
+                        <button class="btn @(Recipe.IsFavourite ? "btn-danger" : "btn-outline-secondary") btn-sm rounded-circle"
                                 style="width:38px; height:38px"
-                                title="@(IsFavourite ? "Remove from favourites" : "Add to favourites")"
+                                title="@(Recipe.IsFavourite ? "Remove from favourites" : "Add to favourites")"
                                 @onclick="ToggleFavourite"
                                 disabled="@IsFavouriteLoading">
                             @if (IsFavouriteLoading)
@@ -66,7 +56,7 @@ else
                             }
                             else
                             {
-                                @(IsFavourite ? "♥" : "♡")
+                                @(Recipe.IsFavourite ? "♥" : "♡")
                             }
                         </button>
 

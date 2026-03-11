@@ -2,19 +2,14 @@
 using NutrilabApp.Frontend.Services;
 using NutrilabApp.Frontend.Services.RecipeServices;
 using NutrilabApp.Frontend.Services.RecipeServices.Models;
-using NutrilabApp.Frontend.Services.RoleServices;
-using NutrilabApp.Frontend.Services.UserServices;
 
 namespace NutrilabApp.Frontend.Pages.Dashboard
 {
-    public class DashboardBase : ComponentBase
+    public class DashboardBase : PageBase
     {
-        [Inject] protected TokenService TokenService { get; set; } = default!;
-        [Inject] protected AuthService AuthService { get; set; } = default!;
         [Inject] protected UserApiService UserApiService { get; set; } = default!;
         [Inject] protected RecipeApiService RecipeApiService { get; set; } = default!;
         [Inject] protected RoleApiService RoleApiService { get; set; } = default!;
-        [Inject] protected NavigationManager Navigation { get; set; } = default!;
 
         protected string Email { get; set; } = "";
         protected List<string> Roles { get; set; } = new();

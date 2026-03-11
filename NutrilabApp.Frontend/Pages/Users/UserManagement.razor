@@ -10,15 +10,6 @@
     </div>
 </div>
 
-@if (!string.IsNullOrEmpty(ErrorMessage))
-{
-    <div class="alert alert-danger">@ErrorMessage</div>
-}
-@if (!string.IsNullOrEmpty(SuccessMessage))
-{
-    <div class="alert alert-success">@SuccessMessage</div>
-}
-
 @if (IsLoading)
 {
     <div class="text-center py-5">

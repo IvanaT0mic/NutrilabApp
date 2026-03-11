@@ -7,9 +7,9 @@ namespace Nutrilab.Repositories
     public interface IRecipeRepository
     {
         Task<List<Recipe>> GetAllAsync();
+        Task<List<Recipe>> GetAllFavsByUserIdAsync(long userId);
         Task<Recipe?> GetByIdExtendedAsync(long id);
         Task<bool> AnyWithUserIdAsync(long userId);
-
         Task<Recipe> InsertAsync(Recipe data);
         Task<Recipe> UpdateAsync(Recipe data);
         Task DeleteAsync(Recipe data);
@@ -30,12 +30,20 @@ namespace Nutrilab.Repositories
             return GetQueryable().ToListAsync();
         }
 
+        public Task<List<Recipe>> GetAllFavsByUserIdAsync(long userId)
+        {
+            return GetQueryable()
+                .Where(r => r.FavouriteUsers.Any(f => f.UserId == userId))
+                .ToListAsync();
+        }
+
         public Task<Recipe?> GetByIdExtendedAsync(long id)
         {
             return GetQueryable()
                 .Include(x => x.RecipeIngredients)
                     .ThenInclude(x => x.Ingredient)
                 .Include(x => x.Resources)
+                .Include(x => x.FavouriteUsers)
                 .AsSplitQuery()
                 .FirstOrDefaultAsync(x => x.Id == id);
         }

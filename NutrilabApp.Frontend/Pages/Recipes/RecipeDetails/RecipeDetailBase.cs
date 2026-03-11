@@ -6,24 +6,18 @@ using NutrilabApp.Frontend.Services.RecipeServices;
 
 namespace NutrilabApp.Frontend.Pages.Recipes.RecipeDetails
 {
-    public class RecipeDetailBase : ComponentBase
+    public class RecipeDetailBase : PageBase
     {
         [Inject] protected RecipeApiService RecipeApiService { get; set; } = default!;
-        [Inject] protected AuthService AuthService { get; set; } = default!;
-        [Inject] protected TokenService TokenService { get; set; } = default!;
-        [Inject] protected NavigationManager Navigation { get; set; } = default!;
         [Inject] protected IJSRuntime JS { get; set; } = default!;
 
         [Parameter] public long Id { get; set; }
 
         protected RecipeDetailOutgoingDto? Recipe { get; set; }
         protected bool IsLoading { get; set; } = true;
-        protected bool IsFavourite { get; set; } = false;
         protected bool IsFavouriteLoading { get; set; } = false;
         protected bool IsDownloading { get; set; } = false;
         protected bool CanEdit { get; set; } = false;
-        protected string? ErrorMessage { get; set; }
-        protected string? SuccessMessage { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -51,30 +45,29 @@ namespace NutrilabApp.Frontend.Pages.Recipes.RecipeDetails
         {
             if (IsFavouriteLoading) return;
             IsFavouriteLoading = true;
-            ErrorMessage = null;
 
             try
             {
                 bool success;
-                if (IsFavourite)
+                if (Recipe.IsFavourite)
                     success = await RecipeApiService.RemoveFromFavouritesAsync(Id);
                 else
                     success = await RecipeApiService.MarkAsFavouriteAsync(Id);
 
                 if (success)
                 {
-                    IsFavourite = !IsFavourite;
-                    SuccessMessage = IsFavourite ? "Added to favourites!" : "Removed from favourites.";
-                    _ = Task.Delay(2000).ContinueWith(_ => { SuccessMessage = null; InvokeAsync(StateHasChanged); });
+                    Recipe.IsFavourite = !Recipe.IsFavourite;
+                    Notifications.ShowSuccess(Recipe.IsFavourite ? "Added to favourites!" : "Removed from favourites.");
+                    _ = Task.Delay(500).ContinueWith(_ => { InvokeAsync(StateHasChanged); });
                 }
                 else
                 {
-                    ErrorMessage = "Could not update favourites.";
+                    Notifications.ShowError("Could not update favourites.");
                 }
             }
             catch
             {
-                ErrorMessage = "Could not update favourites.";
+                Notifications.ShowError("Could not update favourites.");
             }
             finally
             {
@@ -86,7 +79,6 @@ namespace NutrilabApp.Frontend.Pages.Recipes.RecipeDetails
         {
             if (IsDownloading) return;
             IsDownloading = true;
-            ErrorMessage = null;
 
             try
             {
@@ -99,12 +91,12 @@ namespace NutrilabApp.Frontend.Pages.Recipes.RecipeDetails
                 }
                 else
                 {
-                    ErrorMessage = "Failed to download PDF.";
+                    Notifications.ShowError("Failed to download PDF.");
                 }
             }
             catch
             {
-                ErrorMessage = "Failed to download PDF.";
+                Notifications.ShowError("Failed to download PDF.");
             }
             finally
             {

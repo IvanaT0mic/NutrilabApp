@@ -1,17 +1,17 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using NutrilabApp.Frontend.Services;
 
 namespace NutrilabApp.Frontend.Pages.Login
 {
-    public class LoginBase : ComponentBase
+    public class LoginBase : PageBase
     {
-        [Inject] protected AuthService AuthService { get; set; } = default!;
-        [Inject] protected NavigationManager Navigation { get; set; } = default!;
+        [Inject] protected IJSRuntime JS { get; set; } = default!;
 
         protected string Email { get; set; } = "";
         protected string Password { get; set; } = "";
-        protected string ErrorMessage { get; set; } = "";
         protected bool IsLoading { get; set; } = false;
+        protected bool IsOnline { get; set; } = true;
 
         protected override async Task OnInitializedAsync()
         {
@@ -19,17 +19,34 @@ namespace NutrilabApp.Frontend.Pages.Login
                 Navigation.NavigateTo("/dashboard");
         }
 
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                IsOnline = await JS.InvokeAsync<bool>("eval", "navigator.onLine");
+                StateHasChanged();
+            }
+        }
+
         protected async Task HandleLogin()
         {
+            IsOnline = await JS.InvokeAsync<bool>("eval", "navigator.onLine");
+            if (!IsOnline)
+            {
+                Notifications.ShowError("You are offline. Please check your connection.");
+                return;
+            }
+
             IsLoading = true;
-            ErrorMessage = "";
 
             var success = await AuthService.LoginAsync(Email, Password);
 
             if (success)
                 Navigation.NavigateTo("/dashboard");
             else
-                ErrorMessage = "Invalid email or password.";
+            {
+                Notifications.ShowError("Invalid email or password.");
+            }
 
             IsLoading = false;
         }

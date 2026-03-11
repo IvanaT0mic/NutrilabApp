@@ -3,21 +3,17 @@ using Nutrilab.Dtos.ShoppingList.CreateShoppingListDtos;
 using Nutrilab.Dtos.ShoppingList.ShoppingListOutgoingDtos;
 using NutrilabApp.Frontend.Services;
 
-namespace NutrilabApp.Frontend.Pages.ShoppingLists
+namespace NutrilabApp.Frontend.Pages.ShopingLists
 {
-    public class ShoppingListBase : ComponentBase
+    public class ShoppingListBase : PageBase
     {
         [Inject] protected ShoppingListApiService ShoppingListApiService { get; set; } = default!;
-        [Inject] protected AuthService AuthService { get; set; } = default!;
-        [Inject] protected NavigationManager Navigation { get; set; } = default!;
 
         protected List<ShoppingListOutgoingDto> Lists { get; set; } = new();
         protected bool IsLoading { get; set; } = true;
         protected bool IsCreating { get; set; } = false;
         protected bool ShowCreateForm { get; set; } = false;
         protected string NewListName { get; set; } = "";
-        protected string? ErrorMessage { get; set; }
-        protected string? SuccessMessage { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -39,7 +35,7 @@ namespace NutrilabApp.Frontend.Pages.ShoppingLists
             }
             catch
             {
-                ErrorMessage = "Failed to load shopping lists.";
+                Notifications.ShowError("Failed to load shopping lists.");
             }
             finally
             {
@@ -51,7 +47,6 @@ namespace NutrilabApp.Frontend.Pages.ShoppingLists
         {
             if (string.IsNullOrWhiteSpace(NewListName)) return;
             IsCreating = true;
-            ErrorMessage = null;
 
             var id = await ShoppingListApiService.CreateAsync(new CreateShoppingListDto { Name = NewListName });
             if (id.HasValue)
@@ -59,12 +54,12 @@ namespace NutrilabApp.Frontend.Pages.ShoppingLists
                 NewListName = "";
                 ShowCreateForm = false;
                 await LoadLists();
-                SuccessMessage = "Shopping list created!";
-                _ = Task.Delay(2000).ContinueWith(_ => { SuccessMessage = null; InvokeAsync(StateHasChanged); });
+                Notifications.ShowSuccess("Shopping list created!");
+                _ = Task.Delay(500).ContinueWith(_ => { InvokeAsync(StateHasChanged); });
             }
             else
             {
-                ErrorMessage = "Failed to create list.";
+                Notifications.ShowError("Failed to create list.");
             }
 
             IsCreating = false;
@@ -76,7 +71,7 @@ namespace NutrilabApp.Frontend.Pages.ShoppingLists
             if (success)
                 await LoadLists();
             else
-                ErrorMessage = "Could not delete list.";
+                Notifications.ShowError("Could not delete list.");
         }
     }
 }

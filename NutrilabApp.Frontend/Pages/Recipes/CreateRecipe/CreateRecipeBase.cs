@@ -3,23 +3,19 @@ using Microsoft.AspNetCore.Components.Forms;
 using Nutrilab.Dtos.Ingredients;
 using Nutrilab.Dtos.Recipes.CreateRecipeDtos;
 using Nutrilab.Shared.Enums;
+using NutrilabApp.Frontend.Pages.Recipes.CreateRecipe.Models;
 using NutrilabApp.Frontend.Services;
 using NutrilabApp.Frontend.Services.RecipeServices;
 
-namespace NutrilabApp.Frontend.Pages.Recipes
+namespace NutrilabApp.Frontend.Pages.Recipes.CreateRecipe
 {
-    public class CreateRecipeBase : ComponentBase
+    public class CreateRecipeBase : PageBase
     {
         [Inject] protected RecipeApiService RecipeApiService { get; set; } = default!;
         [Inject] protected IngredientApiService IngredientApiService { get; set; } = default!;
-        [Inject] protected AuthService AuthService { get; set; } = default!;
-        [Inject] protected TokenService TokenService { get; set; } = default!;
-        [Inject] protected NavigationManager Navigation { get; set; } = default!;
 
         protected bool IsLoading { get; set; } = true;
         protected bool IsSaving { get; set; } = false;
-        protected string? ErrorMessage { get; set; }
-        protected string? SuccessMessage { get; set; }
 
         // Form fields
         protected string Name { get; set; } = "";
@@ -88,7 +84,7 @@ namespace NutrilabApp.Frontend.Pages.Recipes
 
             if (IngredientRows.Any(r => r.IngredientId == NewIngredientId.Value))
             {
-                ErrorMessage = "This ingredient is already added.";
+                Notifications.ShowError("This ingredient is already added.");
                 return;
             }
 
@@ -103,7 +99,6 @@ namespace NutrilabApp.Frontend.Pages.Recipes
             NewIngredientId = null;
             NewIngredientQuantity = "";
             NewIngredientUnit = "";
-            ErrorMessage = null;
         }
 
         protected void RemoveIngredient(long ingredientId)
@@ -139,12 +134,11 @@ namespace NutrilabApp.Frontend.Pages.Recipes
         {
             if (string.IsNullOrWhiteSpace(Name))
             {
-                ErrorMessage = "Recipe name is required.";
+                Notifications.ShowError("Recipe name is required.");
                 return;
             }
 
             IsSaving = true;
-            ErrorMessage = null;
 
             var dto = new CreateRecipeDto
             {
@@ -163,7 +157,7 @@ namespace NutrilabApp.Frontend.Pages.Recipes
             var newId = await RecipeApiService.CreateRecipeAsync(dto);
             if (newId == null)
             {
-                ErrorMessage = "Failed to create recipe.";
+                Notifications.ShowError("Failed to create recipe.");
                 IsSaving = false;
                 return;
             }
@@ -179,17 +173,10 @@ namespace NutrilabApp.Frontend.Pages.Recipes
                 catch { }
             }
 
-            SuccessMessage = "Recipe created!";
+            Notifications.ShowSuccess("Recipe created!");
             await Task.Delay(800);
             Navigation.NavigateTo($"/recipes/{newId.Value}");
         }
 
-        public class RecipeIngredientRow
-        {
-            public long IngredientId { get; set; }
-            public string IngredientName { get; set; } = "";
-            public decimal Quantity { get; set; }
-            public string Unit { get; set; } = "";
-        }
     }
 }

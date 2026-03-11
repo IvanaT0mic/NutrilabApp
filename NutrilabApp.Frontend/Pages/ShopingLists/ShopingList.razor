@@ -1,5 +1,4 @@
 ﻿@page "/shopping-lists"
-@using NutrilabApp.Frontend.Pages.ShoppingLists
 @inherits ShoppingListBase
 
 <PageTitle>Shopping Lists - NutriLab</PageTitle>
@@ -13,15 +12,6 @@
         + New List
     </button>
 </div>
-
-@if (!string.IsNullOrEmpty(ErrorMessage))
-{
-    <div class="alert alert-danger">@ErrorMessage</div>
-}
-@if (!string.IsNullOrEmpty(SuccessMessage))
-{
-    <div class="alert alert-success">@SuccessMessage</div>
-}
 
 @if (ShowCreateForm)
 {

@@ -1,0 +1,182 @@
+﻿@page "/roles"
+@inherits RoleManagementBase
+
+<PageTitle>Roles & Permissions - NutriLab</PageTitle>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-0">Roles & Permissions</h2>
+        <small class="text-muted">@Roles.Count role(s) configured</small>
+    </div>
+</div>
+
+@if (IsLoading)
+{
+    <div class="text-center py-5">
+        <div class="spinner-border text-success" role="status"></div>
+        <p class="mt-2 text-muted">Loading roles...</p>
+    </div>
+}
+else
+{
+    <div class="row g-4">
+        <div class="col-12 col-lg-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header d-flex justify-content-between align-items-center"
+                     style="background: var(--nutrilab-green); color: white;">
+                    <span class="fw-semibold">🔐 Roles</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        @foreach (var role in Roles)
+                        {
+                            <button class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3 px-3
+                                                   @(SelectedRole?.Id == role.Id ? "active-role" : "")"
+                                    @onclick="() => SelectRole(role)">
+                                <div>
+                                    <div class="fw-semibold">@role.Name</div>
+                                    <small class="text-muted">@role.Permissions.Count permission(s)</small>
+                                </div>
+                                <span class="badge rounded-pill"
+                                      style="background-color: var(--nutrilab-green-light); color: var(--nutrilab-green)">
+                                    @role.Permissions.Count
+                                </span>
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-8">
+            @if (SelectedRole == null)
+            {
+                <div class="card shadow-sm h-100 d-flex align-items-center justify-content-center"
+                     style="min-height: 300px;">
+                    <div class="text-center text-muted py-5">
+                        <div style="font-size: 3rem">🔐</div>
+                        <p class="mt-2">Select a role to view and edit its permissions</p>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="card shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center"
+                         style="background: var(--nutrilab-green); color: white;">
+                        <div>
+                            <span class="fw-semibold">@SelectedRole.Name</span>
+                            <small class="ms-2 opacity-75">— Permissions</small>
+                        </div>
+                        @if (IsAdmin && !IsEditingPermissions)
+                        {
+                            <button class="btn btn-sm btn-light text-success fw-semibold"
+                                    @onclick="StartEditPermissions">
+                                ✏️ Edit
+                            </button>
+                        }
+                    </div>
+                    <div class="card-body">
+                        @if (!IsEditingPermissions)
+                        {
+                            <!-- READ VIEW -->
+                            @if (!SelectedRole.Permissions.Any())
+                            {
+                                <div class="text-center text-muted py-4">
+                                    <p>No permissions assigned to this role.</p>
+                                    @if (IsAdmin)
+                                    {
+                                        <button class="btn btn-outline-success btn-sm"
+                                                @onclick="StartEditPermissions">
+                                            + Add permissions
+                                        </button>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="row g-2">
+                                    @foreach (var perm in AllPermissions)
+                                    {
+                                        var has = SelectedRole.Permissions.Contains(perm.Name);
+                                        <div class="col-12 col-md-6">
+                                            <div class="d-flex align-items-center gap-2 p-2 rounded-2"
+                                                 style="background: @(has ? "var(--nutrilab-green-light)" : "#f8f9fa")">
+                                                <div class="flex-grow-1">
+                                                    <div class="small fw-semibold" style="color: @(has ? "var(--nutrilab-green)" : "#6c757d")">
+                                                        @GetPermissionLabel(perm.Name)
+                                                    </div>
+                                                    <div class="text-muted" style="font-size: 0.7rem">@perm.Name</div>
+                                                </div>
+                                                @if (has)
+                                                {
+                                                    <span class="text-success fw-bold">✓</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">–</span>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <!-- EDIT VIEW -->
+                            <p class="text-muted small mb-3">
+                                Check or uncheck permissions for the <strong>@SelectedRole.Name</strong> role.
+                            </p>
+                            <div class="row g-2 mb-4">
+                                @foreach (var perm in AllPermissions)
+                                {
+                                    var isChecked = EditingPermissionIds.Contains(perm.Id);
+                                    <div class="col-12 col-md-6">
+                                        <label class="d-flex align-items-center gap-2 p-2 rounded-2 cursor-pointer"
+                                               style="background: @(isChecked ? "var(--nutrilab-green-light)" : "#f8f9fa"); cursor: pointer">
+                                            <input type="checkbox"
+                                                   class="form-check-input mt-0"
+                                                   checked="@isChecked"
+                                                   @onchange="@(e => TogglePermission(perm.Id, (bool)e.Value!))" />
+                                                <div class="small fw-semibold" style="color: @(isChecked ? "var(--nutrilab-green)" : "#6c757d")">
+                                                    @GetPermissionLabel(perm.Name)
+                                                </div>
+                                                <div class="text-muted" style="font-size: 0.7rem">@perm.Name</div>
+                                        </label>
+                                    </div>
+                                }
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-success" @onclick="SavePermissions" disabled="@IsSaving">
+                                    @(IsSaving ? "Saving..." : "✓ Save Changes")
+                                </button>
+                                <button class="btn btn-outline-secondary" @onclick="CancelEditPermissions" disabled="@IsSaving">
+                                    Cancel
+                                </button>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+<style>
+    .active-role {
+        background-color: var(--nutrilab-green-light) !important;
+        color: var(--nutrilab-green) !important;
+        border-left: 3px solid var(--nutrilab-green);
+    }
+
+    .active-role .text-muted {
+        color: var(--nutrilab-green) !important;
+        opacity: 0.7;
+    }
+
+    .active-role .badge {
+        background-color: var(--nutrilab-green) !important;
+        color: white !important;
+    }
+</style>

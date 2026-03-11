@@ -1,0 +1,91 @@
+﻿.snackbar-container {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-width: 380px;
+}
+
+.snackbar-toast {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    animation-duration: 0.25s;
+    animation-fill-mode: both;
+}
+
+.snackbar-success {
+    background-color: #2d6a4f;
+    color: white;
+}
+
+.snackbar-error {
+    background-color: #dc2626;
+    color: white;
+}
+
+.snackbar-icon {
+    font-size: 1rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.snackbar-message {
+    flex: 1;
+    line-height: 1.3;
+}
+
+.snackbar-close {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+    .snackbar-close:hover {
+        color: white;
+    }
+
+@keyframes slideIn {
+    from {
+        transform: translateX(120%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateX(120%);
+        opacity: 0;
+    }
+}
+
+.snackbar-enter {
+    animation-name: slideIn;
+}
+
+.snackbar-exit {
+    animation-name: slideOut;
+}
