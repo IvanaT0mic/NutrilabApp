@@ -43,7 +43,7 @@ await app.Services.AutoUpdateDatabaseContextAsync();
 
 app.UseHttpsRedirection();
 
-app.UseCors();
+app.UseCors("AllowPWA");
 app.UseAuthentication();
 app.UseAuthorization();
 

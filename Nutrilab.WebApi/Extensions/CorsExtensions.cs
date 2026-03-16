@@ -6,11 +6,14 @@
         {
             services.AddCors(options =>
             {
-                options.AddDefaultPolicy(policy =>
+                options.AddPolicy("AllowPWA", policy =>
                 {
-                    policy.WithOrigins("https://localhost:7206")
-                          .AllowAnyHeader()
-                          .AllowAnyMethod();
+                    policy.WithOrigins(
+                            "http://localhost:5043",
+                            "https://localhost:7206"
+                        )
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
                 });
             });
         }
