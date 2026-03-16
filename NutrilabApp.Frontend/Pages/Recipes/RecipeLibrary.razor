@@ -1,7 +1,7 @@
 ﻿@page "/recipes"
 @inherits RecipeLibraryBase
 
-<PageTitle>Recipe Library - NutriLab</PageTitle>
+<PageTitle>Recipe Library - NutriPlan</PageTitle>
 
 <div class="mb-4">
     <h2 class="mb-3">Recipe Library</h2>
@@ -11,7 +11,7 @@
         <li class="nav-item">
             <button class="nav-link @(ActiveTab == "All" ? "active" : "")"
                     @onclick='() => SetTab("All")'>
-                📖 All Recipes
+                All Recipes
                 <span class="badge ms-1" style="background-color: var(--nutrilab-green-light); color: var(--nutrilab-green)">
                     @AllRecipes.Count
                 </span>
@@ -20,7 +20,7 @@
         <li class="nav-item">
             <button class="nav-link @(ActiveTab == "Favourites" ? "active" : "")"
                     @onclick='() => SetTab("Favourites")'>
-                ⭐ My Favourites
+                My Favourites
             </button>
         </li>
     </ul>

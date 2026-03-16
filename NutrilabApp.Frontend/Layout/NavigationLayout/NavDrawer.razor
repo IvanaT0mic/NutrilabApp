@@ -1,0 +1,38 @@
+﻿@inherits MainLayoutBase
+
+@if (IsAdminOrMaintainer)
+{
+    <a href="/users" @onclick="OnNavigate"
+       class="nav-link @(CurrentPage == "users" ? "active" : "")">
+        👥 User Management
+    </a>
+    <a href="/roles" @onclick="OnNavigate"
+       class="nav-link @(CurrentPage == "roles" ? "active" : "")">
+        🔐 Roles & Permissions
+    </a>
+}
+
+@if (IsEditorOrAdmin)
+{
+    <a href="/ingredients" @onclick="OnNavigate"
+       class="nav-link @(CurrentPage == "ingredients" ? "active" : "")">
+        🥦 Ingredients
+    </a>
+    <a href="/recipes/create" @onclick="OnNavigate"
+       class="nav-link @(CurrentPage == "recipes/create" ? "active" : "")">
+        ✏️ Create Recipe
+    </a>
+}
+
+<a href="/recipes" @onclick="OnNavigate"
+   class="nav-link @(CurrentPage == "recipes" ? "active" : "")">
+    📖 Recipe Library
+</a>
+<a href="/shopping-lists" @onclick="OnNavigate"
+   class="nav-link @(CurrentPage == "shopping-lists" ? "active" : "")">
+    🛒 Shopping Lists
+</a>
+
+@code {
+    [Parameter] public EventCallback OnNavigate { get; set; }
+}

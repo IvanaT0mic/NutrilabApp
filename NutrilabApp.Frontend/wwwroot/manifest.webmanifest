@@ -1,6 +1,6 @@
 {
-  "name": "NutriLab",
-  "short_name": "NutriLab",
+  "name": "NutriPlan",
+  "short_name": "NutriPlan",
   "id": "./",
   "start_url": "./",
   "display": "standalone",

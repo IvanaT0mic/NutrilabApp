@@ -1,7 +1,7 @@
 ﻿@page "/recipes/{Id:long}/edit"
 @inherits EditRecipeBase
 
-<PageTitle>Edit Recipe - NutriLab</PageTitle>
+<PageTitle>Edit Recipe - NutriPlan</PageTitle>
 
 @if (IsLoading)
 {
@@ -113,11 +113,17 @@ else
                     </div>
                     <div class="col-sm-2">
                         <label class="form-label fw-semibold small mb-1">Unit</label>
-                        <input type="text" class="form-control form-control-sm" placeholder="g, ml..."
-                               @bind="NewIngredientUnit" />
+                        <input type="text" class="form-control form-control-sm"
+                               value="@NewIngredientUnit"
+                               readonly
+                               style="background-color:#f8f9fa; cursor:default;" />
                     </div>
                     <div class="col-sm-2">
-                        <button class="btn btn-success btn-sm w-100" @onclick="AddIngredient">+ Add</button>
+                        <button class="btn btn-success btn-sm w-100"
+                                @onclick="AddIngredient"
+                                disabled="@(NewIngredientId == 0)">
+                            + Add
+                        </button>
                     </div>
                 </div>
             </div>

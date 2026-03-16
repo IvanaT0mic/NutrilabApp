@@ -1,0 +1,28 @@
+﻿@inherits MainLayoutBase
+
+<div class="d-flex align-items-center gap-2 mb-2">
+    <div class="user-avatar">
+        @(string.IsNullOrEmpty(Email) ? "?" : Email[0].ToString().ToUpper())
+    </div>
+    <div class="overflow-hidden">
+        <div class="text-white small fw-semibold text-truncate" style="max-width:150px">
+            @Email
+        </div>
+        <div class="small" style="color: var(--nutrilab-green-mid)">
+            @PrimaryRole
+        </div>
+    </div>
+</div>
+
+@if (!IsOnline)
+{
+    <div class="d-flex align-items-center gap-2 mb-2 px-2 py-1 rounded-2"
+         style="background-color:#fee2e2; color:#dc2626; font-size:0.78rem; font-weight:600">
+        <span>📵</span>
+        <span>You are offline</span>
+    </div>
+}
+
+<button class="btn btn-sm btn-outline-danger w-100" @onclick="Logout">
+    Logout
+</button>

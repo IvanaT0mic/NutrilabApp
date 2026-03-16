@@ -1,4 +1,5 @@
-﻿@using NutrilabApp.Frontend.Services.SnackBarServices
+﻿@using NutrilabApp.Frontend.Layout.NavigationLayout
+@using NutrilabApp.Frontend.Services.SnackBarServices
 @inherits MainLayoutBase
 
 @if (!IsReady)
@@ -10,47 +11,41 @@
 else
 {
     <aside class="sidebar-desktop d-none d-lg-flex flex-column">
-        <div class="sidebar-logo">🥗 NutriLab</div>
+        <div class="sidebar-logo">
+            <img src="carrot.png" alt="NutriPlan" style="width:28px; height:28px; object-fit:contain;" />
+            NutriPlan
+        </div>
         <nav class="sidebar-nav nav flex-column">
-            @NavLinks
+            <NavDrawer />
         </nav>
         <div class="sidebar-footer">
-            @UserFooter
+            <UserFooter />
         </div>
     </aside>
 
     <nav class="mobile-topbar d-flex d-lg-none">
-        <span class="mobile-topbar-title">🥗 NutriLab</span>
-        <button class="btn btn-sm btn-outline-light"
-                type="button"
-                data-bs-toggle="offcanvas"
-                data-bs-target="#mobileMenu"
-                aria-controls="mobileMenu">
-            ☰
-        </button>
+        <span class="mobile-topbar-title">
+            <img src="carrot.png" alt="NutriLab" style="width:25px; height:25px; object-fit:contain;" />
+            <h2>NutriPlan</h2>
+        </span>
+        <button class="btn btn-sm btn-outline-light" @onclick="ToggleMenu">☰</button>
     </nav>
 
-    <div class="offcanvas offcanvas-start"
-         style="background-color:#1b4332; width:260px; color:white"
-         tabindex="-1"
-         id="mobileMenu"
-         aria-labelledby="mobileMenuLabel">
-        <div class="offcanvas-header" style="border-bottom: 1px solid rgba(255,255,255,0.1)">
-            <h6 class="offcanvas-title text-white" id="mobileMenuLabel">🥗 NutriLab</h6>
-            <button type="button"
-                    class="btn-close btn-close-white"
-                    data-bs-dismiss="offcanvas"
-                    aria-label="Close"></button>
+    @if (_menuOpen)
+    {
+        <div class="drawer-overlay" @onclick="ToggleMenu"></div>
+        <div class="drawer-panel">
+            <div class="drawer-header">
+                <button class="btn-close btn-close-white" @onclick="ToggleMenu"></button>
+            </div>
+            <div class="drawer-nav">
+                <NavDrawer OnNavigate="CloseMenu" />
+            </div>
+            <div class="drawer-footer">
+                <UserFooter />
+            </div>
         </div>
-        <div class="offcanvas-body p-2">
-            <nav class="nav flex-column">
-                @NavLinks
-            </nav>
-        </div>
-        <div class="p-3" style="border-top: 1px solid rgba(255,255,255,0.1)">
-            @UserFooter
-        </div>
-    </div>
+    }
 
     <main class="main-content">
         @Body
@@ -60,81 +55,7 @@ else
 }
 
 @code {
-    private RenderFragment NavLinks => __builder =>
-    {
-        <a href="/dashboard"
-           class="nav-link @(CurrentPage == "dashboard" ? "active" : "")">
-            🏠 Dashboard
-        </a>
-
-        if (IsAdminOrMaintainer)
-        {
-            <a href="/users"
-               class="nav-link @(CurrentPage == "users" ? "active" : "")">
-                👥 User Management
-            </a>
-        }
-
-        if (IsAdminOrMaintainer)
-        {
-            <a href="/roles"
-               class="nav-link @(CurrentPage == "roles" ? "active" : "")">
-                🔐 Roles & Permissions
-            </a>
-        }
-
-        if (IsEditorOrAdmin)
-        {
-            <a href="/ingredients"
-               class="nav-link @(CurrentPage == "ingredients" ? "active" : "")">
-                🥦 Ingredients
-            </a>
-        }
-
-        if (IsEditorOrAdmin)
-        {
-            <a href="/recipes/create"
-               class="nav-link @(CurrentPage == "recipes/create" ? "active" : "")">
-                ✏️ Create Recipe
-            </a>
-        }
-
-        <a href="/recipes"
-           class="nav-link @(CurrentPage == "recipes" ? "active" : "")">
-            📖 Recipe Library
-        </a>
-
-        <a href="/shopping-lists"
-           class="nav-link @(CurrentPage == "shopping-lists" ? "active" : "")">
-            🛒 Shopping Lists
-        </a>
-    };
-
-    private RenderFragment UserFooter => __builder =>
-    {
-        <div class="d-flex align-items-center gap-2 mb-2">
-            <div class="user-avatar">
-                @(string.IsNullOrEmpty(Email) ? "?" : Email[0].ToString().ToUpper())
-            </div>
-            <div class="overflow-hidden">
-                <div class="text-white small fw-semibold text-truncate" style="max-width:150px">
-                    @Email
-                </div>
-                <div class="small" style="color: var(--nutrilab-green-mid)">
-                    @PrimaryRole
-                </div>
-            </div>
-        </div>
-        @if (!IsOnline)
-        {
-            <div class="d-flex align-items-center gap-2 mb-2 px-2 py-1 rounded-2"
-                 style="background-color:#fee2e2; color:#dc2626; font-size:0.78rem; font-weight:600">
-                <span>📵</span>
-                <span>You are offline</span>
-            </div>
-        }
-        <button class="btn btn-sm btn-outline-danger w-100" @onclick="Logout">
-            Logout
-        </button>
-    };
+    private bool _menuOpen = false;
+    private void ToggleMenu() => _menuOpen = !_menuOpen;
+    private void CloseMenu() => _menuOpen = false;
 }

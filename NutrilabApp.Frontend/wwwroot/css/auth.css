@@ -15,10 +15,13 @@
     max-width: 420px;
 }
 
+
 .auth-title {
     text-align: center;
     color: #2d6a4f;
     margin-bottom: 2rem;
+    display: flex;
+    gap: 10px;
 }
 
 .form-group {
@@ -94,4 +97,17 @@
     border-radius: 8px;
     margin-bottom: 1rem;
     font-size: 0.9rem;
+}
+
+@media (max-width: 480px) {
+    .auth-card {
+        padding: 1.5rem;
+        margin: 1rem;
+        border-radius: 12px;
+    }
+
+    .auth-wrapper {
+        align-items: flex-start;
+        padding-top: 2rem;
+    }
 }

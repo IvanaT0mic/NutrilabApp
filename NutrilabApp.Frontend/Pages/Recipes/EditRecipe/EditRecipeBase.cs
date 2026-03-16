@@ -69,13 +69,14 @@ namespace NutrilabApp.Frontend.Pages.Recipes.EditRecipe
                 SelectedMealCategory = recipe.MealCategory;
                 SelectedDifficultyLvl = recipe.DifficultyLvl;
 
-                IngredientRows = recipe.Ingredients.Select(i => new RecipeIngredientRow
-                {
-                    IngredientId = i.IngredientId,
-                    IngredientName = i.IngredientName,
-                    Quantity = i.Quantity,
-                    Unit = i.Unit
-                }).ToList();
+                IngredientRows = recipe.Ingredients.Select(i =>
+                    new RecipeIngredientRow
+                    {
+                        IngredientId = i.IngredientId,
+                        IngredientName = i.IngredientName,
+                        Unit = i.Unit,
+                        Quantity = i.Quantity,
+                    }).ToList();
             }
             catch
             {
@@ -180,6 +181,7 @@ namespace NutrilabApp.Frontend.Pages.Recipes.EditRecipe
             {
                 IngredientId = ing.Id,
                 IngredientName = ing.Name,
+                Unit = ing.Unit,
                 Quantity = decimal.TryParse(NewIngredientQuantity, out var q) ? q : 0,
             });
 
@@ -190,9 +192,16 @@ namespace NutrilabApp.Frontend.Pages.Recipes.EditRecipe
         protected void SetNewIngredient(ChangeEventArgs e)
         {
             if (long.TryParse(e.Value?.ToString(), out var id))
+            {
                 NewIngredientId = id;
+                var ingredient = AvailableIngredients.FirstOrDefault(i => i.Id == id);
+                NewIngredientUnit = ingredient?.Unit ?? "";
+            }
             else
-                NewIngredientId = null;
+            {
+                NewIngredientId = 0;
+                NewIngredientUnit = "";
+            }
         }
 
         protected void RemoveIngredient(long ingredientId)
