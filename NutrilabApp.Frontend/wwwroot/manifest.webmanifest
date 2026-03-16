@@ -1,22 +1,33 @@
 {
-  "name": "NutriPlan",
-  "short_name": "NutriPlan",
-  "id": "./",
-  "start_url": "./",
+  "id": "/",
+  "name": "NutriLab",
+  "short_name": "NutriLab",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#f0f7f1",
-  "theme_color": "#2d6a4f",
-  "prefer_related_applications": false,
+  "theme_color": "#1b4332",
   "icons": [
     {
-      "src": "icon-512.jpg",
-      "type": "image/jpg",
-      "sizes": "512x512"
+      "src": "carrot.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshot-mobile.png",
+      "sizes": "366x806",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "NutriLab mobile view"
     },
     {
-      "src": "icon-192.jpg",
-      "type": "image/jpg",
-      "sizes": "192x192"
+      "src": "screenshot-desktop.png",
+      "sizes": "1360x766",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "NutriLab desktop view"
     }
   ]
 }
